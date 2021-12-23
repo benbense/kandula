@@ -77,3 +77,11 @@ resource "tfe_variable" "jenkins_nodes_count" {
   workspace_id = tfe_workspace.servers.id
   category     = "terraform"
 }
+
+resource "tfe_variable" "tfe_organization_name" {
+  key          = "tfe_organization_name"
+  value        = var.tfe_organization_name
+  description  = "TFE Organization Name"
+  workspace_id = tfe_workspace.servers.id
+  category     = "terraform"
+}
