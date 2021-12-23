@@ -34,6 +34,7 @@ module "servers" {
   auto_apply                  = var.auto_apply
   consul_servers_count        = var.consul_servers_count
   jenkins_nodes_count         = var.jenkins_nodes_count
+  server_key                  = aws_key_pair.server_key.key_name
 
   depends_on = [
     module.vpc
@@ -43,4 +44,18 @@ module "servers" {
 resource "tfe_run_trigger" "vpc_creation" {
   workspace_id  = module.servers.servers_workspace_id
   sourceable_id = module.vpc.vpc_workspace_id
+}
+
+resource "tls_private_key" "server_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "server_key" {
+  public_key = tls_private_key.server_key.public_key_openssh
+}
+
+resource "local_file" "server_key" {
+  sensitive_content = tls_private_key.server_key.public_key_pem
+  filename          = var.private_key_path
 }

@@ -66,3 +66,8 @@ variable "consul_servers_count" {
 variable "jenkins_nodes_count" {
   description = "How much Jenkins nodes to create"
 }
+
+variable "server_key" {
+  type        = string
+  description = "Public SSH key name"
+}

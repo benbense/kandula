@@ -97,6 +97,7 @@ variable "auto_apply" {
 }
 
 variable "consul_servers_count" {
+  type        = number
   description = "How much Consul servers to create"
   validation {
     condition     = var.consul_servers_count == 1 || var.consul_servers_count == 3 || var.consul_servers_count == 5
@@ -105,5 +106,11 @@ variable "consul_servers_count" {
 }
 
 variable "jenkins_nodes_count" {
+  type        = number
   description = "How much Jenkins nodes to create"
+}
+
+variable "private_key_path" {
+  type        = string
+  description = "File path to save the PEM key file"
 }

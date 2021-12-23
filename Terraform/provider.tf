@@ -4,11 +4,21 @@ terraform {
       source  = "hashicorp/tfe"
       version = "0.27.0"
     }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "3.70.0"
+    }
   }
 }
 
 provider "tfe" {
   token = var.tfe_token
+}
+
+provider "aws" {
+  region     = var.aws_default_region
+  access_key = var.aws_acess_key
+  secret_key = var.aws_secret_acess_key
 }
 
 resource "tfe_oauth_client" "github_oauth" {
