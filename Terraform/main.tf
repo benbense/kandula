@@ -1,5 +1,6 @@
 module "vpc" {
   source                    = ".\\modules\\terraform-tfe-vpc"
+  tfe_organization_name     = var.tfe_organization_name
   github_user               = var.github_user
   oauth_token_id            = tfe_oauth_client.github_oauth.oauth_token_id
   github_branch             = var.github_branch
@@ -17,6 +18,7 @@ module "vpc" {
 
 module "servers" {
   source                      = ".\\modules\\terraform-tfe-servers"
+  tfe_organization_name       = var.tfe_organization_name
   github_user                 = var.github_user
   oauth_token_id              = tfe_oauth_client.github_oauth.oauth_token_id
   github_branch               = var.github_branch

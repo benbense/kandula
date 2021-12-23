@@ -62,14 +62,6 @@ resource "tfe_variable" "vpc_workspace_name" {
   category     = "terraform"
 }
 
-resource "tfe_variable" "tfe_organization_name" {
-  key          = "tfe_organization_name"
-  value        = var.tfe_organization_name
-  description  = "Terrafrom Cloud Organization Name"
-  workspace_id = tfe_workspace.servers.id
-  category     = "terraform"
-}
-
 resource "tfe_variable" "consul_servers_count" {
   key          = "consul_servers_count"
   value        = var.consul_servers_count
