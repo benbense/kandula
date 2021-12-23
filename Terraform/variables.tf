@@ -100,7 +100,7 @@ variable "consul_servers_count" {
   description = "How much Consul servers to create"
   validation {
     condition     = var.consul_servers_count == 1 || var.consul_servers_count == 3 || var.consul_servers_count == 5
-    error_message = "Invalid Consul servers amount."
+    error_message = "Invalid Consul servers amount, value must be 1 || 3 || 5."
   }
 }
 

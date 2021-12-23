@@ -11,9 +11,11 @@ module "vpc" {
   aws_default_region        = var.aws_default_region
   cidr_size                 = var.cidr_size
   vpc_workspace_name        = var.vpc_workspace_name
+  organization_name         = var.organization_name
   workspace_repo_identifier = var.workspace_repo_identifier
   vpc_workspace_directory   = var.vpc_workspace_directory
   auto_apply                = var.auto_apply
+  aws_provider_version      = var.aws_provider_version
 }
 
 module "servers" {
@@ -31,9 +33,11 @@ module "servers" {
   vpc_workspace_name          = var.vpc_workspace_name
   workspace_repo_identifier   = var.workspace_repo_identifier
   servers_workspace_directory = var.servers_workspace_directory
+  organization_name           = var.organization_name
   auto_apply                  = var.auto_apply
   consul_servers_count        = var.consul_servers_count
   jenkins_nodes_count         = var.jenkins_nodes_count
+  aws_provider_version        = var.aws_provider_version
 
   depends_on = [
     module.vpc
