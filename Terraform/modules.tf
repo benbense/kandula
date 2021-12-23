@@ -6,10 +6,10 @@ resource "tfe_registry_module" "aws-vpc" {
   }
 }
 
-resource "tfe_registry_module" "aws-ec2" {
+resource "tfe_registry_module" "aws-servers" {
   vcs_repo {
-    display_identifier = "benbense/terraform-aws-ec2"
-    identifier         = "benbense/terraform-aws-ec2"
+    display_identifier = "benbense/terraform-aws-servers"
+    identifier         = "benbense/terraform-aws-servers"
     oauth_token_id     = tfe_oauth_client.github_oauth.oauth_token_id
   }
 }

@@ -1,6 +1,6 @@
-resource "tfe_notification_configuration" "ec2_slack_notifications" {
-  workspace_id     = module.ec2.ec2_workspace_id
-  name             = var.ec2_workspace_name
+resource "tfe_notification_configuration" "servers_slack_notifications" {
+  workspace_id     = module.servers.servers_workspace_id
+  name             = var.servers_workspace_name
   enabled          = true
   destination_type = "slack"
   triggers = [

@@ -14,10 +14,6 @@ variable "github_branch" {
   type        = string
 }
 
-variable "instances_to_create" {
-  description = "Number of EC2 instances to create"
-  type        = number
-}
 variable "instance_type" {
   description = "Instance type"
   type        = string
@@ -41,8 +37,8 @@ variable "aws_default_region" {
   description = "AWS Default Region"
   type        = string
 }
-variable "ec2_workspace_name" {
-  description = "EC2 Workspace name"
+variable "servers_workspace_name" {
+  description = "servers Workspace name"
   type        = string
 }
 variable "vpc_workspace_name" {
@@ -54,11 +50,19 @@ variable "workspace_repo_identifier" {
   type        = string
 }
 
-variable "ec2_workspace_directory" {
-  description = "Working directory for EC2 module"
+variable "servers_workspace_directory" {
+  description = "Working directory for servers module"
   type        = string
 }
 
 variable "auto_apply" {
   description = "Whether to automatically apply changes when a Terraform plan is successful"
+}
+
+variable "consul_servers_count" {
+  description = "How much Consul servers to create"
+}
+
+variable "jenkins_nodes_count" {
+  description = "How much Jenkins nodes to create"
 }

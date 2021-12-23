@@ -47,10 +47,6 @@ variable "cidr_size" {
   type        = string
 }
 
-variable "instances_to_create" {
-  description = "Number of EC2 instances to create"
-  type        = number
-}
 variable "instance_type" {
   description = "Instance type"
   type        = string
@@ -61,8 +57,8 @@ variable "bucket_name" {
   type        = string
 }
 
-variable "ec2_workspace_name" {
-  description = "EC2 Workspace Name"
+variable "servers_workspace_name" {
+  description = "servers Workspace Name"
   type        = string
 }
 variable "vpc_workspace_name" {
@@ -85,8 +81,8 @@ variable "workspace_repo_identifier" {
   type        = string
 }
 
-variable "ec2_workspace_directory" {
-  description = "Working directory for EC2 module"
+variable "servers_workspace_directory" {
+  description = "Working directory for servers module"
   type        = string
 }
 
@@ -100,3 +96,14 @@ variable "auto_apply" {
   type        = bool
 }
 
+variable "consul_servers_count" {
+  description = "How much Consul servers to create"
+  validation {
+    condition     = var.consul_servers_count == 1 || var.consul_servers_count == 3 || var.consul_servers_count == 5
+    error_message = "Invalid Consul servers amount."
+  }
+}
+
+variable "jenkins_nodes_count" {
+  description = "How much Jenkins nodes to create"
+}
