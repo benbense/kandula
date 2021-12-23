@@ -45,8 +45,3 @@ variable "organization_name" {
   type        = string
   description = "TFE Organization Name"
 }
-
-variable "aws_provider_version" {
-  type        = string
-  description = "AWS Provider version to use"
-}

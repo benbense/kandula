@@ -26,8 +26,3 @@ variable "region" {
   type        = string
   description = "AWS region to deploy"
 }
-
-variable "aws_provider_version" {
-  type        = string
-  description = "AWS Provider version to use"
-}

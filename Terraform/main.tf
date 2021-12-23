@@ -14,7 +14,6 @@ module "vpc" {
   workspace_repo_identifier = var.workspace_repo_identifier
   vpc_workspace_directory   = var.vpc_workspace_directory
   auto_apply                = var.auto_apply
-  aws_provider_version      = var.aws_provider_version
 }
 
 module "servers" {
@@ -35,7 +34,6 @@ module "servers" {
   auto_apply                  = var.auto_apply
   consul_servers_count        = var.consul_servers_count
   jenkins_nodes_count         = var.jenkins_nodes_count
-  aws_provider_version        = var.aws_provider_version
 
   depends_on = [
     module.vpc
