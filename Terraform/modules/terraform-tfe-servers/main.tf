@@ -92,5 +92,4 @@ resource "tfe_variable" "server_key" {
   description  = "Public SSH key name"
   workspace_id = tfe_workspace.servers.id
   category     = "terraform"
-  sensitive    = true
 }
