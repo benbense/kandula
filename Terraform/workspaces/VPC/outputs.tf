@@ -16,5 +16,5 @@ output "private_subnets_ids" {
 
 output "instance_profile_name" {
   description = "IAM Policy name"
-  value       = aws_iam_instance_profile.describe_instances.name
+  value       = module.vpc.instance_profile_name
 }
