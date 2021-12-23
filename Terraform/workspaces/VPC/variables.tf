@@ -2,10 +2,7 @@ variable "vpc_name" {
   type        = string
   description = "VPC Name"
 }
-variable "aws_default_region" {
-  type        = string
-  description = "AWS region to deploy"
-}
+
 variable "cidr_size" {
   type        = string
   description = "CIDR Size"
