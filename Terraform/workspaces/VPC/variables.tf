@@ -2,7 +2,7 @@ variable "vpc_name" {
   type        = string
   description = "VPC Name"
 }
-variable "region" {
+variable "aws_default_region" {
   type        = string
   description = "AWS region to deploy"
 }
@@ -14,29 +14,4 @@ variable "cidr_size" {
 variable "availability_zones" {
   type        = number
   description = "Availability zones to account for"
-}
-
-variable "instances_to_create" {
-  type        = number
-  description = "servers instances to create"
-}
-
-variable "instance_type" {
-  type        = string
-  description = "servers instances type"
-}
-
-variable "bucket_name" {
-  type        = string
-  description = "Bucket name for ALB logs"
-}
-
-variable "vpc_workspace_name" {
-  type        = string
-  description = "VPC Workspace Name for Backed State"
-}
-
-variable "organization_name" {
-  type        = string
-  description = "TFE Organization Name"
 }

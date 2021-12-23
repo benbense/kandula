@@ -18,7 +18,7 @@ variable "organization_name" {
   description = "TFE Organization Name"
 }
 
-variable "region" {
+variable "aws_default_region" {
   type        = string
   description = "AWS region to deploy"
 }
