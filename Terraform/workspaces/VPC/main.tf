@@ -1,5 +1,5 @@
 module "vpc" {
-  source             = "app.terraform.io/opsschool-ben/vpc/aws"
+  source             = "app.terraform.io/kandula/vpc/aws"
   version            = "1.0.0"
   vpc_name           = var.vpc_name
   cidr_size          = var.cidr_size

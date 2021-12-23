@@ -8,7 +8,7 @@ data "terraform_remote_state" "vpc" {
   }
 }
 module "servers" {
-  source               = "app.terraform.io/opsschool-ben/servers/aws"
+  source               = "app.terraform.io/kandula/servers/aws"
   version              = "1.0.1"
   vpc_id               = data.terraform_remote_state.vpc.outputs.vpc_id
   available_zone_names = data.terraform_remote_state.vpc.outputs.available_zone_names
