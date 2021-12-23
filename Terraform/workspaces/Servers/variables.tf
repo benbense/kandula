@@ -17,3 +17,13 @@ variable "tfe_organization_name" {
   type        = string
   description = "TFE Organization Name"
 }
+
+variable "jenkins_nodes_count" {
+  description = "How much Jenkins nodes to create"
+  type        = number
+}
+
+variable "consul_servers_count" {
+  description = "How much Consul servers to create"
+  type        = number
+}
