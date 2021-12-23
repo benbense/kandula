@@ -31,7 +31,7 @@ variable "bucket_name" {
   description = "Bucket name for ALB logs"
 }
 
-variable "servers_module_version" {
+variable "vpc_module_version" {
   type        = string
   description = "VPC module version to use"
 }
