@@ -18,10 +18,6 @@ variable "organization_name" {
   description = "TFE Organization Name"
 }
 
-variable "servers_module_version" {
-  type        = string
-  description = "Servers module version to use"
-}
 variable "region" {
   type        = string
   description = "AWS region to deploy"
