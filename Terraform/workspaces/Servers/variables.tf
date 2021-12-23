@@ -13,7 +13,7 @@ variable "vpc_workspace_name" {
   description = "VPC Workspace Name for Backed State"
 }
 
-variable "organization_name" {
+variable "tfe_organization_name" {
   type        = string
   description = "TFE Organization Name"
 }
