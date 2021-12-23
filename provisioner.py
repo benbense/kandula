@@ -1,6 +1,4 @@
-import os
 import boto3
-from collections import defaultdict
 import paramiko
 from paramiko.rsakey import RSAKey
 from scp import SCPClient
