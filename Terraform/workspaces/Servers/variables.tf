@@ -27,3 +27,8 @@ variable "consul_servers_count" {
   description = "How much Consul servers to create"
   type        = number
 }
+
+variable "server_key" {
+  type        = string
+  description = "Public SSH key name"
+}
