@@ -1,4 +1,11 @@
 ---
+- name: Install AWS Facts Gathering Dependencies
+  apt:
+    name:
+      - python-boto3
+    update_cache: yes
+    state: present
+
 - ec2_metadata_facts:
 - ec2_instance_facts:
     instance_ids: '{{ ansible_ec2_instance_id }}'

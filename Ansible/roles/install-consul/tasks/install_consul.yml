@@ -12,7 +12,7 @@
     InstanceType: "{{ instance_info.instances | map(attribute='tags.instance_type') | list | join('\n') }}"
     is_consul_monitored: "{{ instance_info.instances | map(attribute='tags.is_consul_monitored') | list | join('\n') }}"
 
-- name: Install Dependencies
+- name: Install Consul Dependencies
   apt:
     name:
       - unzip
