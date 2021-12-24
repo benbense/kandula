@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+  vars:
+    consul_servers_amount: 3
+    consul_dc_name: kandula
+
+  roles:
+    - role: install-consul

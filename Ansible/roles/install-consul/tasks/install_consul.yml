@@ -1,0 +1,121 @@
+---
+- ec2_metadata_facts:
+- ec2_instance_facts:
+    instance_ids: '{{ ansible_ec2_instance_id }}'
+    region: '{{ ansible_ec2_placement_region }}' 
+  register: instance_info
+
+- name: Save Instance Info
+  set_fact:
+    InstanceName: "{{ instance_info.instances | map(attribute='tags.Name') | list | join('\n') }}"
+    InstanceService: "{{ instance_info.instances | map(attribute='tags.instance_service') | list | join('\n') }}"
+    InstanceType: "{{ instance_info.instances | map(attribute='tags.instance_type') | list | join('\n') }}"
+    is_consul_monitored: "{{ instance_info.instances | map(attribute='tags.is_consul_monitored') | list | join('\n') }}"
+
+- name: Install Dependencies
+  apt:
+    name:
+      - unzip
+      - dnsmasq
+    update_cache: yes
+    state: present
+
+- name: Configure dnsmaq
+  copy:
+    src: dnsmasq_config
+    dest: "{{ dnsmasq_config_path }}"
+
+- name: Restart dnsmaq
+  service:
+    name: dnsmasq
+    state: restarted
+
+- name: Configure resolvd.conf
+  copy:
+    src: resolved_config
+    dest: "{{ resolved_config_path }}"
+
+- name: Restart systemd-resolved
+  service:
+    name: systemd-resolved.service
+    state: restarted
+
+- name: Download Consul
+  become: yes
+  get_url:
+    url: "{{ consul_url }}"
+    dest: /tmp/consul.zip
+
+- name: Extract Consul
+  unarchive:
+    src: /tmp/consul.zip
+    dest: /tmp
+
+- name: Make Consul Executable and relocate Consul binary file
+  copy:
+    src: /tmp/consul
+    dest: /usr/local/bin/consul
+    mode: a+x
+
+- name: Create Consul Group
+  group:
+    name: consul
+    state: present
+
+- name: Create Consul User
+  user:
+    name: consul
+
+- name: Create Consul Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: consul
+    group: consul
+  loop:
+    - /opt/consul
+    - /etc/consul.d
+    - /run/consul
+
+- include_tasks: server.yml
+  when: is_consul_monitored == true and InstanceService == "consul" and InstanceType == "server"
+  # when: inventory_hostname in groups["Instance_Type_server"]
+  name: Configuring Consul As a Server
+
+- include_tasks: agent.yml
+  when: is_consul_monitored == true and InstanceService != "consul"
+  #when: inventory_hostname in groups["Instance_Type_node"]
+  name: Configuring Consul As a Node
+
+- name: Update Consul config IP Address
+  lineinfile:
+    path: /etc/consul.d/config.json
+    regexp: "^(.*)advertise_addr(.*)$"
+    line: '"advertise_addr": "{{ ansible_ec2_local_ipv4 }}",'
+
+- name: Update Consul config DC Name
+  lineinfile:
+    path: /etc/consul.d/config.json
+    regexp: "^(.*)datacenter(.*)$"
+    line: '"datacenter": "{{ consul_dc_name }}",'
+
+- name: Update Consul config Server Name
+  lineinfile:
+    path: /etc/consul.d/config.json
+    regexp: "^(.*)node_name(.*)$"
+    line: '"node_name": "{{ InstanceName }}",'
+
+- name: Configure Consul service
+  copy:
+    src: consul.service
+    dest: /etc/systemd/system/consul.service
+
+- name: Enable Consul service
+  systemd:
+    name: consul.service
+    enabled: yes
+
+- name: Start Consul service
+  systemd:
+    name: consul.service
+    state: started

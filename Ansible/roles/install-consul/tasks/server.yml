@@ -1,0 +1,11 @@
+---
+- name: Create Consul server config.json
+  copy:
+    src: consul_server_config.json
+    dest: /etc/consul.d/config.json
+
+- name: Update Consul bootstrap_to_excpect
+  lineinfile:
+    path: /etc/consul.d/config.json
+    regexp: "^(.*)servers_count(.*)$"
+    line: '"bootstrap_expect": {{ consul_servers_amount }},'
