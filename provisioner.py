@@ -8,11 +8,8 @@ def get_bastion_host_ip(ec2):
     running_instances = ec2.instances.filter(Filters=[{
         'Name': 'tag:service_role',
         'Values': ['bastion']
-    }])
+    }, {'Name': 'instance-state-name', 'Values': ['running']}])
     for instance in running_instances:
-        for tag in instance.tags:
-            if 'Name' in tag['Key']:
-                name = tag['Value']
         return instance.public_ip_address
 
 
@@ -33,22 +30,22 @@ def ssh_client_connection(host_ip, private_key_file_path):
 
 def scp_file_copy(ssh_session, file, remote_path):
     with SCPClient(ssh_session.get_transport()) as scp:
-        scp.put(file, remote_path=remote_path)
+        scp.put(file, remote_path=remote_path, recursive=True)
 
 
 def ssh_run_commands(ssh_session, commands: list):
     for command in commands:
-        print("="*25, command, "="*25)
+        print("="*25, command, "="*25, "\n")
         stdin, stdout, stderr = ssh_session.exec_command(command)
-        print(stdout.read().decode())
-        err = stderr.read().decode()
-        if err:
-            print(err)
-        else:
-            print("Command Successful")
+        while True:
+            line = stdout.readline()
+            if not line:
+                break
+            print(line, end="")
 
 
-private_key_file_path = f"C:\\Keys\\kandula.pem"
+private_key_file_path = f"C:\\Keys\\Kandula.pem"
+ansible_files = f"Ansible"
 ec2 = boto3.resource('ec2')
 
 bastion_host_ip = get_bastion_host_ip(ec2)
@@ -59,7 +56,12 @@ bastion_ssh_session = ssh_client_connection(
 scp_file_copy(bastion_ssh_session, private_key_file_path,
               '/home/ubuntu/.ssh/id_rsa')
 
-ssh_commands = [["chmod 600 /home/ubuntu/.ssh/id_rsa",
-                 "sudo sed -i 's/#   StrictHostKeyChecking ask/    StrictHostKeyChecking no/g' /etc/ssh/ssh_config", ]]
+ssh_commands = ["chmod 600 /home/ubuntu/.ssh/id_rsa",
+                "sudo sed -i 's/#   StrictHostKeyChecking ask/    StrictHostKeyChecking no/g' /etc/ssh/ssh_config"]
+
+install_ansible_commands = ["sudo apt update", "sudo apt install software-properties-common",
+                            "sudo add-apt-repository --yes --update ppa:ansible/ansible", "sudo apt install ansible -y", "sudo apt install python-boto3 -y"]
 
 ssh_run_commands(bastion_ssh_session, ssh_commands)
+ssh_run_commands(bastion_ssh_session, install_ansible_commands)
+scp_file_copy(bastion_ssh_session, ansible_files, '~/')
