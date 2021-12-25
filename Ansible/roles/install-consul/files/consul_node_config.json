@@ -8,7 +8,7 @@
     "disable_update_check": true,
     "leave_on_terminate": true,
     "retry_join": [
-        "provider=aws tag_key=consul_server tag_value=true"
+        "provider=aws tag_key=service_role tag_value=service_discovery"
     ],
     "enable_script_checks": true,
     "server": false
