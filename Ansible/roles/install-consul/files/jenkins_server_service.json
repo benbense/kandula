@@ -1,0 +1,19 @@
+{
+  "services": [
+    {
+      "name": "Jenkins Server",
+      "tags": [
+        "CICD"
+      ],
+      "port": 80,
+      "checks": [
+        {
+          "name": "tcp-80",
+          "tcp": "localhost:80",
+          "interval": "5s",
+          "timeout": "10s"
+        }
+      ]
+    }
+  ]
+}
