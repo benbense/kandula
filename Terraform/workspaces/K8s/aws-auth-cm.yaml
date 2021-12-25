@@ -14,8 +14,8 @@ data:
       username: aws_cli
       groups: 
         - system:masters
-  # mapUsers: |
-  #   - userarn: <arn:aws:iam::111122223333:user/admin>
-  #     username: <admin>
-  #     groups:
-  #       - <system:masters>
+    mapUsers: |
+      - userarn: <arn:aws:iam::388698741721:user/Ben-PC>
+        username: <admin>
+        groups:
+          - <system:masters>
