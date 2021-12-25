@@ -1,7 +1,13 @@
 import boto3
 import paramiko
+import sys
 from paramiko.rsakey import RSAKey
 from scp import SCPClient
+
+
+def progress(filename, size, sent):
+    sys.stdout.write("Copying: %s - Progress: %.2f%%   \n" %
+                     (filename, float(sent)/float(size)*100))
 
 
 def get_consul_servers_amount(ec2):
@@ -34,13 +40,13 @@ def ssh_client_connection(host_ip, private_key_file_path):
                            username="ubuntu", pkey=private_key)
         return ssh_client
     except:
-        print("Error connecting to host '{}' using key file '{}'".format(
-            host_ip, private_key_file_path))
+        print(
+            f"Error connecting to host '{host_ip}' using key file '{private_key_file_path}'")
         exit()
 
 
 def scp_file_copy(ssh_session, file, remote_path):
-    with SCPClient(ssh_session.get_transport()) as scp:
+    with SCPClient(ssh_session.get_transport(), progress=progress) as scp:
         scp.put(file, remote_path=remote_path, recursive=True)
 
 
@@ -76,6 +82,7 @@ install_ansible_commands = ["sudo apt update", "sudo apt install software-proper
                             "sudo add-apt-repository --yes --update ppa:ansible/ansible", "sudo apt install ansible -y", "sudo apt install python-boto3 -y"]
 
 run_ansible_playbook = [
-    'ansible-playbook {}/main.yml -i {}/aws_ec2.yml -e "consul_servers_amount={} consul_dc_name=kandula"'.format(ansible_files, consul_servers_amount)]
+    f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula"']
 ssh_run_commands(bastion_ssh_session, ssh_commands)
 ssh_run_commands(bastion_ssh_session, install_ansible_commands)
+ssh_run_commands(bastion_ssh_session, run_ansible_playbook)
