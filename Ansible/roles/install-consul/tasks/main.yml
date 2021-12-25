@@ -2,20 +2,24 @@
 - name: Install AWS Facts Gathering Dependencies
   apt:
     name:
+      - python-pip
       - python-boto3
     update_cache: yes
     state: present
+    
+- name: Install boto3 pip
+  pip:
+    name: boto3
 
 - ec2_metadata_facts:
 - ec2_instance_facts:
-    instance_ids: '{{ ansible_ec2_instance_id }}'
-    region: '{{ ansible_ec2_placement_region }}' 
+    instance_ids: "{{ ansible_ec2_instance_id }}"
+    region: "{{ ansible_ec2_placement_region }}"
   register: instance_info
 
 - name: Save Instance Info
   set_fact:
     is_consul_monitored: "{{ instance_info.instances | map(attribute='tags.is_consul_monitored') | list | join('\n') }}"
-
 
 - include_tasks: install_consul.yml
   when: is_consul_monitored == true
