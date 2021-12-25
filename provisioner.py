@@ -4,6 +4,17 @@ from paramiko.rsakey import RSAKey
 from scp import SCPClient
 
 
+def get_consul_servers_amount(ec2):
+    count = 0
+    running_instances = ec2.instances.filter(Filters=[{
+        'Name': 'tag:service_role',
+        'Values': ['service_discovery']
+    }, {'Name': 'instance-state-name', 'Values': ['running']}])
+    for instance in running_instances:
+        count = count + 1
+    return count
+
+
 def get_bastion_host_ip(ec2):
     running_instances = ec2.instances.filter(Filters=[{
         'Name': 'tag:service_role',
@@ -49,12 +60,14 @@ ansible_files = f"Ansible"
 ec2 = boto3.resource('ec2')
 
 bastion_host_ip = get_bastion_host_ip(ec2)
+consul_servers_amount = get_consul_servers_amount(ec2)
 
 bastion_ssh_session = ssh_client_connection(
     bastion_host_ip, private_key_file_path)
 
 scp_file_copy(bastion_ssh_session, private_key_file_path,
               '/home/ubuntu/.ssh/id_rsa')
+scp_file_copy(bastion_ssh_session, ansible_files, '~/')
 
 ssh_commands = ["chmod 600 /home/ubuntu/.ssh/id_rsa",
                 "sudo sed -i 's/#   StrictHostKeyChecking ask/    StrictHostKeyChecking no/g' /etc/ssh/ssh_config"]
@@ -62,6 +75,7 @@ ssh_commands = ["chmod 600 /home/ubuntu/.ssh/id_rsa",
 install_ansible_commands = ["sudo apt update", "sudo apt install software-properties-common",
                             "sudo add-apt-repository --yes --update ppa:ansible/ansible", "sudo apt install ansible -y", "sudo apt install python-boto3 -y"]
 
+run_ansible_playbook = [
+    'ansible-playbook {}/main.yml -i {}/aws_ec2.yml -e "consul_servers_amount={} consul_dc_name=kandula"'.format(ansible_files, consul_servers_amount)]
 ssh_run_commands(bastion_ssh_session, ssh_commands)
 ssh_run_commands(bastion_ssh_session, install_ansible_commands)
-scp_file_copy(bastion_ssh_session, ansible_files, '~/')
