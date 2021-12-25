@@ -66,7 +66,7 @@ resource "tfe_run_trigger" "servers_trigger" {
 }
 
 resource "tfe_run_trigger" "kubernetes_trigger" {
-  workspace_id  = module.servers.kubernetes_workspace_id
+  workspace_id  = module.eks.kubernetes_workspace_id
   sourceable_id = module.vpc.vpc_workspace_id
 }
 

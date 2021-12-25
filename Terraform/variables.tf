@@ -114,3 +114,22 @@ variable "private_key_path" {
   type        = string
   description = "File path to save the PEM key file"
 }
+
+
+variable "k8s_service_account_namespace" {
+  description = "Kubernetes Service Account Namespace"
+}
+
+variable "k8s_service_account_name" {
+  description = "Kubernetes Service Account Name"
+}
+
+variable "kubernetes_workspace_directory" {
+  description = "Working directory for servers module"
+  type        = string
+}
+
+variable "kubernetes_workspace_name" {
+  description = "servers Workspace name"
+  type        = string
+}

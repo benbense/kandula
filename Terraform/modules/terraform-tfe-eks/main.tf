@@ -12,17 +12,9 @@ resource "tfe_workspace" "kubernetes" {
   auto_apply          = var.auto_apply
 }
 
-resource "tfe_variable" "kubernetes_version" {
-  key          = "kubernetes_version"
-  value        = var.kubernetes_version
-  description  = "Kubernetes Version"
-  workspace_id = tfe_workspace.kubernetes.id
-  category     = "terraform"
-}
-
 resource "tfe_variable" "aws_region" {
   key          = "aws_region"
-  value        = var.aws_region
+  value        = var.aws_default_region
   description  = "AWS Default Region"
   workspace_id = tfe_workspace.kubernetes.id
   category     = "terraform"
@@ -68,14 +60,6 @@ resource "tfe_variable" "aws_default_region" {
   description  = "AWS Default Region"
   workspace_id = tfe_workspace.kubernetes.id
   category     = "env"
-}
-
-resource "tfe_variable" "vpc_workspace_name" {
-  key          = "vpc_workspace_name"
-  value        = var.vpc_workspace_name
-  description  = "VPC Workspace Name"
-  workspace_id = tfe_workspace.kubernetes.id
-  category     = "terraform"
 }
 
 resource "tfe_variable" "k8s_service_account_namespace" {
