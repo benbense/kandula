@@ -1,18 +1,6 @@
 ---
-- ec2_metadata_facts:
-- ec2_instance_info:
-    instance_ids: "{{ ansible_ec2_instance_id }}"
-    region: "{{ ansible_ec2_placement_region }}"
-  register: instance_info
-
-- name: Save Instance Info
-  set_fact:
-    is_consul_monitored: "{{ instance_info.instances | map(attribute='tags.is_consul_monitored') | list | join('\n') }}"
-    service_role: "{{ instance_info.instances | map(attribute='tags.service_role') | list | join('\n') }}"
-
 - include_tasks: install_consul.yml
-  when: is_consul_monitored == true
   name: Install and Configure Consul
 
 - include_tasks: register_consul_service.yml
-  when: is_consul_monitored == true and service_role != service_discovery
+  when: is_consul_monitored == true and service_role != "service_discovery"

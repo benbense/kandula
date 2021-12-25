@@ -1,0 +1,8 @@
+---
+- include_tasks: server.yml
+  when: instance_type == "server"
+  name: Install Jenkins Server
+
+- include_tasks: node.yml
+  when: instance_type == "node"
+  name: Install Jenkins Node

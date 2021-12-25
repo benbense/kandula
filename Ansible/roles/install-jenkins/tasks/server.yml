@@ -1,0 +1,24 @@
+---
+- name: Configure Jenkins apt repository key
+  apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+    state: present
+
+- name: Configure Jenkins Repository
+  apt_repository:
+    repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+    state: present
+
+- name: Update Cache
+  apt:
+    update_cache: yes
+
+- name: Install Jenkins and Prerequisites
+  apt:
+    name:
+      - openjdk-11-jdk
+      - jenkins
+    state: present
+
+- name: Ensure Jenkins is running
+  service: name=jenkins state=started
