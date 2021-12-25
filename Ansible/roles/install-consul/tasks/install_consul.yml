@@ -1,6 +1,6 @@
 ---
 - ec2_metadata_facts:
-- ec2_instance_facts:
+- ec2_instance_info:
     instance_ids: '{{ ansible_ec2_instance_id }}'
     region: '{{ ansible_ec2_placement_region }}' 
   register: instance_info
@@ -8,7 +8,7 @@
 - name: Save Instance Info
   set_fact:
     InstanceName: "{{ instance_info.instances | map(attribute='tags.Name') | list | join('\n') }}"
-    InstanceService: "{{ instance_info.instances | map(attribute='tags.instance_service') | list | join('\n') }}"
+    InstanceService: "{{ instance_info.instances | map(attribute='tags.service') | list | join('\n') }}"
     InstanceType: "{{ instance_info.instances | map(attribute='tags.instance_type') | list | join('\n') }}"
     is_consul_monitored: "{{ instance_info.instances | map(attribute='tags.is_consul_monitored') | list | join('\n') }}"
 
@@ -82,7 +82,7 @@
   # when: inventory_hostname in groups["Instance_Type_server"]
   name: Configuring Consul As a Server
 
-- include_tasks: agent.yml
+- include_tasks: node.yml
   when: is_consul_monitored == true and InstanceService != "consul"
   #when: inventory_hostname in groups["Instance_Type_node"]
   name: Configuring Consul As a Node

@@ -2,8 +2,19 @@
 - hosts: all
   become: true
   vars:
-    consul_servers_amount: 3
-    consul_dc_name: kandula
+    ansible_python_interpreter: /usr/bin/python3
+  
+  pre_tasks:
+    - name: Install AWS Facts Gathering Dependencies
+      apt:
+        name:
+          - python3-pip
+        update_cache: yes
+        state: present
+
+    - name: Install boto3 pip
+      pip:
+        name: boto3
 
   roles:
     - role: install-consul
