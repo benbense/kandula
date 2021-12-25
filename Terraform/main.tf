@@ -41,8 +41,32 @@ module "servers" {
   ]
 }
 
-resource "tfe_run_trigger" "vpc_creation" {
+module "eks" {
+  source                         = ".\\modules\\terraform-tfe-eks"
+  tfe_organization_name          = var.tfe_organization_name
+  github_user                    = var.github_user
+  oauth_token_id                 = tfe_oauth_client.github_oauth.oauth_token_id
+  github_branch                  = var.github_branch
+  aws_acess_key                  = var.aws_acess_key
+  aws_default_region             = var.aws_default_region
+  aws_secret_acess_key           = var.aws_secret_acess_key
+  kubernetes_workspace_name      = var.kubernetes_workspace_name
+  vpc_workspace_name             = var.vpc_workspace_name
+  workspace_repo_identifier      = var.workspace_repo_identifier
+  kubernetes_workspace_directory = var.kubernetes_workspace_directory
+  auto_apply                     = var.auto_apply
+  k8s_service_account_namespace  = var.k8s_service_account_namespace
+  k8s_service_account_name       = var.k8s_service_account_name
+
+}
+
+resource "tfe_run_trigger" "servers_trigger" {
   workspace_id  = module.servers.servers_workspace_id
+  sourceable_id = module.vpc.vpc_workspace_id
+}
+
+resource "tfe_run_trigger" "kubernetes_trigger" {
+  workspace_id  = module.servers.kubernetes_workspace_id
   sourceable_id = module.vpc.vpc_workspace_id
 }
 
