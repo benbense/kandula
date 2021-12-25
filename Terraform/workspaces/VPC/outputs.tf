@@ -18,3 +18,8 @@ output "instance_profile_name" {
   description = "IAM Policy name"
   value       = module.vpc.instance_profile_name
 }
+
+output "cluster_name" {
+  description = "EKS Cluster name"
+  value       = module.vpc.cluster_name
+}
