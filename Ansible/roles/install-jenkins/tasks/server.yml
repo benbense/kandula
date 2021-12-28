@@ -6,13 +6,13 @@
       - gnupg
       - lsb-release
       - curl
-      - python3-pip
     update_cache: yes
     state: present
 
 - name: Install Docker Python
   pip:
-    name: docker-py
+    name:
+      - docker
 
 - name: Add GPG key
   apt_key:
@@ -48,3 +48,38 @@
     append: yes
   with_items: "{{ docker_users }}"
 
+- name: Pull Jenkins Docker image
+  ansible.builtin.docker_image:
+    name: jenkins/jenkins
+    source: pull
+    repository: registry.hub.docker.com
+
+- name: Start Jenkins Container
+  community.docker.docker_container:
+    name: jenkins
+    image: jenkins/jenkins
+    state: started
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    env:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    volumes:
+      - /home/ubuntu/jenkins/config:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+- name: Install Jenkins Plugins
+  shell: docker exec jenkins /bin/bash -c '/usr/local/bin/install-plugins.sh {{ item }}'
+  with_items:
+    [
+      "build-pipeline-plugin",
+      "ssh-slaves",
+      "github-branch-source",
+      "blueocean",
+      "slack",
+      "build-monitor-plugin",
+    ]
+  changed_when: true
+
+- name: Restart Jenkins Container
+  shell: docker restart jenkins

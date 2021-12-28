@@ -81,6 +81,9 @@ ssh_commands = ["chmod 600 /home/ubuntu/.ssh/id_rsa",
 install_ansible_commands = ["sudo apt update", "sudo apt install software-properties-common",
                             "sudo add-apt-repository --yes --update ppa:ansible/ansible", "sudo apt install ansible -y", "sudo apt install python-boto3 -y"]
 
+install_ansible_modules = ["ansible-galaxy collection install community.general",
+                           "ansible-galaxy collection install amazon.aws", "ansible-galaxy collection install community.docker"]
+
 run_ansible_playbook = [
     f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula"']
 ssh_run_commands(bastion_ssh_session, ssh_commands)

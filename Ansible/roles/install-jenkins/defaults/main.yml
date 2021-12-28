@@ -1,4 +1,4 @@
 ---
 # defaults file for install-jenkins
-docker_users: ["{{ os_user }}"]
+docker_users: ["ubuntu"]
 docker_group: docker
