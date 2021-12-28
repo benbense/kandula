@@ -1,7 +1,7 @@
 {
   "services": [
     {
-      "name": "Bastion",
+      "name": "bastion",
       "tags": [
         "Bastion"
       ],

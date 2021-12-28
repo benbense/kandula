@@ -1,7 +1,7 @@
 {
   "services": [
     {
-      "name": "Jenkins Node",
+      "name": "jenkins_node",
       "tags": [
         "CICD"
       ],
