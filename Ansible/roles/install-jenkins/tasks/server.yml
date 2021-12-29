@@ -4,7 +4,7 @@
     path: /home/ubuntu/jenkins/config
     state: directory
     group: "{{ docker_group }}"
-    mode: '0777'
+    mode: "0777"
 
 - name: Start Jenkins Container
   community.docker.docker_container:
@@ -31,7 +31,8 @@
       "blueocean",
       "slack",
       "build-monitor-plugin",
-      "docker-workflow"
+      "docker-workflow",
+      "kubernetes-cd",
     ]
   changed_when: true
 
