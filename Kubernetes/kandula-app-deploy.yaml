@@ -5,10 +5,28 @@ metadata:
   annotations:
     kubernetes.io/change-cause: "First deploy of Kandula app"
 spec:
-  containers:
-    - name: kandula-app
-      image: benbense/kandula-app:v1.0
-      ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kandula-app
+  template:
+    metadata:
+      labels:
+        app: kandula-app
+    spec:
+      containers:
+        - name: kuard
+          image: benbense/kandula-app:v1.0
+          env:
+            - name: FLASK_ENV
+              value: "development"
+            - name: AWS_ACCESS_KEY_ID
+              value: ""
+            - name: AWS_SECRET_ACCESS_KEY
+              value: ""
+            - name: AWS_DEFAULT_REGION
+              value: ""
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
