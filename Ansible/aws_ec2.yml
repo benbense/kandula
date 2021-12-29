@@ -9,5 +9,7 @@ keyed_groups:
     prefix: Instance Type
   - key: tags.is_consul_monitored
     perfix: Should install Consul
+  - key: tags.project
+    prefix: Project Name
 compose:
   ansible_host: private_ip_address
