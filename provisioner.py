@@ -84,8 +84,11 @@ install_ansible_commands = ["sudo apt update", "sudo apt install software-proper
 install_ansible_modules = ["ansible-galaxy collection install community.general",
                            "ansible-galaxy collection install amazon.aws", "ansible-galaxy collection install community.docker"]
 
-run_ansible_playbook = [
+run_ansible_playbook_commands = [
     f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula"']
 ssh_run_commands(bastion_ssh_session, ssh_commands)
 ssh_run_commands(bastion_ssh_session, install_ansible_commands)
-ssh_run_commands(bastion_ssh_session, run_ansible_playbook)
+ssh_run_commands(bastion_ssh_session, install_ansible_modules)
+ssh_run_commands(bastion_ssh_session, run_ansible_playbook_commands)
+
+print("Done")
