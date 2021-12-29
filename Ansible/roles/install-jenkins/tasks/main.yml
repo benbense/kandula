@@ -1,4 +1,7 @@
 ---
+- include_tasks: docker.yml
+  name: Install Docker
+
 - include_tasks: server.yml
   when: instance_type == "server"
   name: Install Jenkins Server
