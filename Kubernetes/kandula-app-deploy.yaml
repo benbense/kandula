@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kanduka-app-deployment
+  annotations:
+    kubernetes.io/change-cause: "First deploy of Kandula app"
+spec:
+  containers:
+    - name: kandula-app
+      image: benbense/kandula-app:v1.0
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
