@@ -1,64 +1,17 @@
 ---
-- name: Install Docker prerequisites
-  apt:
-    name:
-      - ca-certificates
-      - gnupg
-      - lsb-release
-      - curl
-    update_cache: yes
-    state: present
-
-- name: Install Docker Python
-  pip:
-    name:
-      - docker
-
-- name: Add GPG key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-
-- name: Setup Docker's stable repo
-  apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-
-- name: Install Docker engine
-  apt:
-    name: ["docker-ce", "docker-ce-cli", "containerd.io"]
-    update_cache: yes
-
-- name: Enable Docker Services
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    state: started
-    enabled: yes
-  with_items:
-    - docker.service
-    - containerd.service
-
-- name: Create Docker group
-  group:
-    name: "{{ docker_group }}"
-    state: present
-
-- name: Add docker users
-  user:
-    name: "{{ item }}"
-    groups: "{{ docker_group }}"
-    append: yes
-  with_items: "{{ docker_users }}"
-
-- name: Pull Jenkins Docker image
-  ansible.builtin.docker_image:
-    name: jenkins/jenkins
-    source: pull
-    repository: registry.hub.docker.com
+- name: Create Jenkins Folders
+  file:
+    path: /home/ubuntu/jenkins/config
+    state: directory
+    group: "{{ docker_group }}"
+    mode: '0777'
 
 - name: Start Jenkins Container
   community.docker.docker_container:
     name: jenkins
     image: jenkins/jenkins
     state: started
+    restart_policy: always
     ports:
       - "8080:8080"
       - "50000:50000"
@@ -78,6 +31,7 @@
       "blueocean",
       "slack",
       "build-monitor-plugin",
+      "docker-workflow"
     ]
   changed_when: true
 
