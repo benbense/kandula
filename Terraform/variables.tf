@@ -133,3 +133,8 @@ variable "kubernetes_workspace_name" {
   description = "servers Workspace name"
   type        = string
 }
+
+variable "elb_account_id" {
+  description = "ELB Account ID - pick one according to region https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html#access-logging-bucket-permissions"
+  type        = string
+}

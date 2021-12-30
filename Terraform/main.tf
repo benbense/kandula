@@ -34,6 +34,7 @@ module "servers" {
   auto_apply                  = var.auto_apply
   consul_servers_count        = var.consul_servers_count
   jenkins_nodes_count         = var.jenkins_nodes_count
+  elb_account_id              = var.elb_account_id
   server_key                  = aws_key_pair.server_key.key_name
 
   depends_on = [

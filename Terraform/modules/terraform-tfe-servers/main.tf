@@ -93,3 +93,11 @@ resource "tfe_variable" "server_key" {
   workspace_id = tfe_workspace.servers.id
   category     = "terraform"
 }
+
+resource "tfe_variable" "elb_account_id" {
+  key          = "elb_account_id"
+  value        = var.elb_account_id
+  description  = "ELB Account ID - pick one according to region https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html#access-logging-bucket-permissions"
+  workspace_id = tfe_workspace.servers.id
+  category     = "terraform"
+}
