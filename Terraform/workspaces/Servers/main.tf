@@ -20,4 +20,5 @@ module "servers" {
   consul_servers_count  = var.consul_servers_count
   jenkins_nodes_count   = var.jenkins_nodes_count
   server_key            = var.server_key
+  elb_account_id        = var.elb_account_id
 }
