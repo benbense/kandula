@@ -61,15 +61,15 @@ module "eks" {
 
 }
 
-resource "tfe_run_trigger" "servers_trigger" {
-  workspace_id  = module.servers.servers_workspace_id
-  sourceable_id = module.vpc.vpc_workspace_id
-}
+# resource "tfe_run_trigger" "servers_trigger" {
+#   workspace_id  = module.servers.servers_workspace_id
+#   sourceable_id = module.vpc.vpc_workspace_id
+# }
 
-resource "tfe_run_trigger" "kubernetes_trigger" {
-  workspace_id  = module.eks.kubernetes_workspace_id
-  sourceable_id = module.vpc.vpc_workspace_id
-}
+# resource "tfe_run_trigger" "kubernetes_trigger" {
+#   workspace_id  = module.eks.kubernetes_workspace_id
+#   sourceable_id = module.vpc.vpc_workspace_id
+# }
 
 resource "tls_private_key" "server_key" {
   algorithm = "RSA"

@@ -10,6 +10,7 @@ resource "tfe_workspace" "kubernetes" {
   execution_mode      = "remote"
   working_directory   = var.kubernetes_workspace_directory
   auto_apply          = var.auto_apply
+  queue_all_runs      = false
 }
 
 resource "tfe_variable" "aws_region" {

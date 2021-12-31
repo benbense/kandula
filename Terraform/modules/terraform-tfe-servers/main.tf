@@ -10,6 +10,7 @@ resource "tfe_workspace" "servers" {
   execution_mode      = "remote"
   working_directory   = var.servers_workspace_directory
   auto_apply          = var.auto_apply
+  queue_all_runs      = false
 }
 
 resource "tfe_variable" "instance_type" {
