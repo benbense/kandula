@@ -41,12 +41,13 @@ def progress(filename, size, sent):
 
 
 def get_eks_cluster_name(eks):
+    # TODO Get cluster by tag
     cluster = eks.list_clusters(maxResults=1)
-    # return cluster["clusters"][0]
-    return 'moshe'
+    return cluster["clusters"][0]
 
 
 def get_consul_servers_amount(ec2):
+    # TODO Change for loop to len
     count = 0
     running_instances = ec2.instances.filter(
         Filters=[
@@ -214,6 +215,7 @@ def wait_for_plan_status(session: Session, run_id, statuses):
 
 
 @log_function
+# TODO Change from vpc_worspace to global value
 def run_plan_to_completion(session, organization_name, workspace_name):
     vpc_workspace = get_tfe_workspace_by_names(
         session,
@@ -225,7 +227,8 @@ def run_plan_to_completion(session, organization_name, workspace_name):
 
     vpc_plan_id = vpc_plan["data"]["id"]
 
-    wait_for_plan_status(session, vpc_plan_id, ["planned"])
+    wait_for_plan_status(session, vpc_plan_id, [
+                         "planned", "planned_and_finished"])
     apply_run_by_id(session, vpc_plan_id)
     wait_for_plan_status(session, vpc_plan_id, [
                          "applied", "planned_and_finished"])
@@ -265,6 +268,7 @@ def run_ansible(terraform_vars):
     eks_cluster_name = get_eks_cluster_name(eks)
     bastion_host_ip = get_bastion_host_ip(ec2)
     consul_servers_amount = get_consul_servers_amount(ec2)
+    aws_default_region = terraform_vars['aws_default_region']
 
     bastion_ssh_session = ssh_client_connection(
         bastion_host_ip, private_key_file_path)
@@ -294,7 +298,7 @@ def run_ansible(terraform_vars):
     ]
 
     run_ansible_playbook_commands = [
-        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name}"'
+        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} aws_default_region={aws_default_region}"'
     ]
 
     ssh_run_commands(bastion_ssh_session, ssh_commands)
