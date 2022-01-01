@@ -25,3 +25,8 @@ variable "vpc_workspace_name" {
   type        = string
   description = "VPC Workspace Name for Backed State"
 }
+
+variable "servers_workspace_name" {
+  type        = string
+  description = "Servers Workspace Name for Backed State"
+}

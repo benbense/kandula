@@ -58,7 +58,7 @@ module "eks" {
   auto_apply                     = var.auto_apply
   k8s_service_account_namespace  = var.k8s_service_account_namespace
   k8s_service_account_name       = var.k8s_service_account_name
-
+  servers_workspace_name         = var.servers_workspace_name
 }
 
 resource "tls_private_key" "server_key" {
