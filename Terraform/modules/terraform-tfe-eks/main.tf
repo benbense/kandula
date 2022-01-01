@@ -29,6 +29,15 @@ resource "tfe_variable" "vpc_workspace_name" {
   category     = "terraform"
 }
 
+resource "tfe_variable" "servers_workspace_name" {
+  key          = "servers_workspace_name"
+  value        = var.servers_workspace_name
+  description  = "Servers Workspace Name"
+  workspace_id = tfe_workspace.kubernetes.id
+  category     = "terraform"
+}
+
+
 resource "tfe_variable" "tfe_organization_name" {
   key          = "tfe_organization_name"
   value        = var.tfe_organization_name
