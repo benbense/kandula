@@ -26,7 +26,7 @@ node(label: 'docker') {
 
     if (deploy.equals('enabled')) {
     stage('Create K8s Deployment file') {
-        withCredentials([string(credentialsId: 'aws.access_key', variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: 'aws.secret_key', variable: 'AWS_SECRET_ACCESS_KEY'), string(credentialsId: 'aws.secret_key', variable: 'AWS_DEFAULT_REGION')]) {
+        withCredentials([string(credentialsId: 'aws.access_key', variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: 'aws.secret_key', variable: 'AWS_SECRET_ACCESS_KEY'), string(credentialsId: 'aws.region', variable: 'AWS_DEFAULT_REGION')]) {
             dep = sh """
                     tee dep.yaml <<-'EOF'
                     apiVersion: apps/v1
