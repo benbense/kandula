@@ -55,12 +55,6 @@ module "eks" {
   ]
 
 }
-
-variable "map_users_objects" {
-  type = list(object({
-
-  }))
-}
 data "aws_eks_cluster" "eks" {
   name = module.eks.cluster_id
 }
