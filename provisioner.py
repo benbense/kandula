@@ -199,7 +199,7 @@ def get_terraform_vars_from_file(terraform_var_file_path):
 
 
 @log_function
-def wait_for_plan_status(session: Session, run_id, status):
+def wait_for_plan_status(session: Session, run_id, statuses):
     # TODO - add max retries
     while True:
         time.sleep(3)
@@ -209,7 +209,7 @@ def wait_for_plan_status(session: Session, run_id, status):
             exit()
         else:
             response_data = response.json()
-            if response_data["data"]["attributes"]["status"] == status:
+            if response_data["data"]["attributes"]["status"] in statuses:
                 return
 
 
@@ -225,9 +225,10 @@ def run_plan_to_completion(session, organization_name, workspace_name):
 
     vpc_plan_id = vpc_plan["data"]["id"]
 
-    wait_for_plan_status(session, vpc_plan_id, "planned")
+    wait_for_plan_status(session, vpc_plan_id, ["planned"])
     apply_run_by_id(session, vpc_plan_id)
-    wait_for_plan_status(session, vpc_plan_id, "applied")
+    wait_for_plan_status(session, vpc_plan_id, [
+                         "applied", "planned_and_finished"])
 
 
 ############################################################################################
@@ -237,6 +238,7 @@ def run_plan_to_completion(session, organization_name, workspace_name):
 def run_terraform(terraform_var_file_path, terraform_vars):
     deploy_terraform(terraform_var_file_path)
 
+    time.sleep(5)
     session = create_tfe_api_session(terraform_vars["tfe_token"])
 
     run_plan_to_completion(
@@ -292,7 +294,7 @@ def run_ansible(terraform_vars):
     ]
 
     run_ansible_playbook_commands = [
-        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} AWS_SECRET_ACCESS_KEY={AWS_SECRET_ACCESS_KEY}, AWS_ACCESS_KEY_ID={AWS_ACCESS_KEY_ID}"'
+        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name}"'
     ]
 
     ssh_run_commands(bastion_ssh_session, ssh_commands)
