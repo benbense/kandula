@@ -71,6 +71,7 @@ module "eks" {
       groups   = ["system:masters"]
     }
   ]
+  manage_aws_auth = true
 }
 data "aws_eks_cluster" "eks" {
   name = module.eks.cluster_id
