@@ -39,6 +39,11 @@ output "jenkins_alb_public_dns" {
 }
 
 output "jenkins_nodes_arns" {
-  description = "ID of the Jenkins Nodes Instances"
+  description = "ARN of the Jenkins Nodes Instances"
   value       = module.servers.jenkins_nodes_arns
+}
+
+output "jenkins_nodes_ids" {
+  description = "ID of the Jenkins Nodes Instances"
+  value       = aws_instance.jenkins_nodes_ids
 }
