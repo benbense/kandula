@@ -1,0 +1,30 @@
+apiVersion: v1
+data:
+  mapAccounts: |
+    []
+  mapRoles: |
+    - "groups":
+      - "system:bootstrappers"
+      - "system:nodes"
+      "rolearn": "arn:aws:iam::388698741721:role/Kandula-eks-aZ8a43Xt2022010111300970420000000c"
+      "username": "system:node:{{EC2PrivateDNSName}}"
+    - "groups":
+      - "system:bootstrappers"
+      - "system:nodes"
+      "rolearn": "arn:aws:iam::388698741721:role/describe_instances"
+      "username": "system:node:{{EC2PrivateDNSName}}"
+  mapUsers: "- userarn: arn:aws:sts::388698741721:assumed-role/describe_instances/i-06dc13f6531df0745\n
+    \ username: i-06dc13f6531df0745\n  groups: \n    - system:masters\n"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"mapAccounts":"[]\n","mapRoles":"- \"groups\":\n  - \"system:bootstrappers\"\n  - \"system:nodes\"\n  \"rolearn\": \"arn:aws:iam::388698741721:role/Kandula-eks-aZ8a43Xt2022010111300970420000000c\"\n  \"username\": \"system:node:{{EC2PrivateDNSName}}\"\n- \"groups\":\n  - \"system:bootstrappers\"\n  - \"system:nodes\"\n  \"rolearn\": \"arn:aws:iam::388698741721:role/describe_instances\"\n  \"username\": \"system:node:{{EC2PrivateDNSName}}\"\n","mapUsers":"- userarn: arn:aws:sts::388698741721:assumed-role/describe_instances/i-06dc13f6531df0745\n  username: i-06dc13f6531df0745\n  groups: \n    - system:masters\n"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2022-01-01T11:30:10Z","labels":{"app.kubernetes.io/managed-by":"Terraform","terraform.io/module":"terraform-aws-modules.eks.aws"},"name":"aws-auth","namespace":"kube-system","resourceVersion":"29062","uid":"f3663cb3-f6af-4616-82e5-13b2f57219b6"}}
+  creationTimestamp: "2022-01-01T11:30:10Z"
+  labels:
+    app.kubernetes.io/managed-by: Terraform
+    terraform.io/module: terraform-aws-modules.eks.aws
+  name: aws-auth
+  namespace: kube-system
+  resourceVersion: "29992"
+  uid: f3663cb3-f6af-4616-82e5-13b2f57219b6

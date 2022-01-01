@@ -38,7 +38,7 @@ output "jenkins_alb_public_dns" {
   value       = module.servers.jenkins_alb_public_dns
 }
 
-output "jenkins_nodes_ids" {
+output "jenkins_nodes_arns" {
   description = "ID of the Jenkins Nodes Instances"
-  value       = module.servers.jenkins_nodes_ids
+  value       = module.servers.jenkins_nodes_arns
 }
