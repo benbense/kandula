@@ -8,16 +8,6 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-terraform {
-  backend "remote" {
-    organization = var.tfe_organization_name
-    workspaces {
-      name = var.vpc_workspace_name
-    }
-  }
-}
-
-
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "17.24.0"
@@ -51,18 +41,26 @@ module "eks" {
       additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
     }
   ]
-  map_users = [object({
-    userarn  = "${data.terraform_remote_state.servers.outputs.jenkins_nodes_arns[0]}"
-    username = "${data.terraform_remote_state.servers.outputs.jenkins_nodes_ids[0]}"
-    groups   = ["system:masters"]
-    }), object({
-    userarn  = "${data.terraform_remote_state.servers.outputs.jenkins_nodes_arns[1]}"
-    username = "${data.terraform_remote_state.servers.outputs.jenkins_nodes_ids[1]}"
-    groups   = ["system:masters"]
-  })]
+  map_users = [
+    {
+      userarn  = data.terraform_remote_state.servers.outputs.jenkins_nodes_arns[0]
+      username = data.terraform_remote_state.servers.outputs.jenkins_nodes_ids[0]
+      groups   = ["system:masters"]
+    },
+    {
+      userarn  = data.terraform_remote_state.servers.outputs.jenkins_nodes_arns[1]
+      username = data.terraform_remote_state.servers.outputs.jenkins_nodes_ids[1]
+      groups   = ["system:masters"]
+    }
+  ]
 
 }
 
+variable "map_users_objects" {
+  type = list(object({
+
+  }))
+}
 data "aws_eks_cluster" "eks" {
   name = module.eks.cluster_id
 }
