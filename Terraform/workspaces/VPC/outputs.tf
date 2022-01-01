@@ -23,3 +23,8 @@ output "cluster_name" {
   description = "EKS Cluster name"
   value       = module.vpc.cluster_name
 }
+
+output "iam_role_arn" {
+  description = "ARN Of Describe Instances Role"
+  value       = module.vpc.iam_role_arn
+}
