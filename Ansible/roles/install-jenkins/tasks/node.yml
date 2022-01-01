@@ -5,3 +5,12 @@
       - openjdk-11-jdk
     update_cache: yes
     state: present
+
+- name: Install Python AWS CLI
+  pip:
+    name: awscli
+
+- name: Configure kubectl with AWS
+  become: no
+  shell: aws eks --region={{ aws_default_region }} update-kubeconfig --name {{ eks_cluster_name }}
+
