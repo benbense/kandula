@@ -45,5 +45,5 @@ output "jenkins_nodes_arns" {
 
 output "jenkins_nodes_ids" {
   description = "ID of the Jenkins Nodes Instances"
-  value       = aws_instance.jenkins_nodes_ids
+  value       = module.servers.jenkins_nodes_ids
 }
