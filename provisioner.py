@@ -60,15 +60,29 @@ def get_consul_servers_amount(ec2):
     return count
 
 
-def get_bastion_host_ip(ec2):
+def get_bastion_host_ip(ec2, get_public_ip: bool):
     running_instances = ec2.instances.filter(
         Filters=[
-            {"Name": "tag:service_role", "Values": ["bastion"]},
+            {"Name": "tag:service", "Values": ["bastion"]},
             {"Name": "instance-state-name", "Values": ["running"]},
         ]
     )
     for instance in running_instances:
-        return instance.public_ip_address
+        if get_public_ip:
+            return instance.public_ip_address
+        else:
+            return instance.private_ip_address
+
+
+def get_ansible_host_private_ip(ec2):
+    running_instances = ec2.instances.filter(
+        Filters=[
+            {"Name": "tag:service", "Values": ["ansible"]},
+            {"Name": "instance-state-name", "Values": ["running"]},
+        ]
+    )
+    for instance in running_instances:
+        return instance.private_ip_address
 
 
 def ssh_client_connection(host_ip, private_key_file_path):
@@ -101,6 +115,28 @@ def ssh_run_commands(ssh_session, commands: list):
             if not line:
                 break
             print(line, end="")
+
+
+def ssh_client_connection_throgh_bastion_host(bastion_ssh_session, bastion_host_private_ip, target_host_ip, ssh_user_name, private_key_file_path):
+    try:
+        bastion_host_transport = bastion_ssh_session.get_transport()
+        src_addr = (bastion_host_private_ip, 22)
+        dest_addr = (target_host_ip, 22)
+        bastion_host_channel = bastion_host_transport.open_channel(
+            "direct-tcpip", dest_addr, src_addr)
+
+        target_host_ssh_client = paramiko.SSHClient()
+        target_host_ssh_client.set_missing_host_key_policy(
+            paramiko.AutoAddPolicy())
+        target_host_ssh_client.connect(target_host_ip, username=ssh_user_name,
+                                       key_filename=private_key_file_path, sock=bastion_host_channel)
+
+        return target_host_ssh_client
+
+    except:
+        print(
+            f"Error Connecting To: {0} Through Bastion Host".format(target_host_ip))
+        exit()
 
 
 @log_function
@@ -256,6 +292,12 @@ def run_terraform(terraform_var_file_path, terraform_vars):
         terraform_vars["servers_workspace_name"],
     )
 
+    run_plan_to_completion(
+        session,
+        terraform_vars["tfe_organization_name"],
+        terraform_vars["kubernetes_workspace_name"],
+    )
+
 
 @log_function
 def run_ansible(terraform_vars):
@@ -266,17 +308,22 @@ def run_ansible(terraform_vars):
     eks = boto3.client("eks")
 
     eks_cluster_name = get_eks_cluster_name(eks)
-    bastion_host_ip = get_bastion_host_ip(ec2)
+    bastion_host_public_ip = get_bastion_host_ip(ec2, get_public_ip=True)
+    bastion_host_private_ip = get_bastion_host_ip(ec2, get_public_ip=False)
+    ansible_host_private_ip = get_ansible_host_private_ip(ec2)
     consul_servers_amount = get_consul_servers_amount(ec2)
     aws_default_region = terraform_vars['aws_default_region']
 
     bastion_ssh_session = ssh_client_connection(
-        bastion_host_ip, private_key_file_path)
+        bastion_host_public_ip, private_key_file_path)
+
+    ansible_ssh_session = ssh_client_connection_throgh_bastion_host(
+        bastion_ssh_session, bastion_host_private_ip, ansible_host_private_ip, "ubuntu", private_key_file_path)
 
     scp_file_copy(
-        bastion_ssh_session, private_key_file_path, "/home/ubuntu/.ssh/id_rsa"
+        ansible_ssh_session, private_key_file_path, "/home/ubuntu/.ssh/id_rsa"
     )
-    scp_file_copy(bastion_ssh_session, ansible_files, "~/")
+    scp_file_copy(ansible_ssh_session, ansible_files, "~/")
 
     ssh_commands = [
         "chmod 600 /home/ubuntu/.ssh/id_rsa",
@@ -301,10 +348,10 @@ def run_ansible(terraform_vars):
         f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} aws_default_region={aws_default_region}"'
     ]
 
-    ssh_run_commands(bastion_ssh_session, ssh_commands)
-    ssh_run_commands(bastion_ssh_session, install_ansible_commands)
-    ssh_run_commands(bastion_ssh_session, install_ansible_modules)
-    ssh_run_commands(bastion_ssh_session, run_ansible_playbook_commands)
+    ssh_run_commands(ansible_ssh_session, ssh_commands)
+    ssh_run_commands(ansible_ssh_session, install_ansible_commands)
+    ssh_run_commands(ansible_ssh_session, install_ansible_modules)
+    ssh_run_commands(ansible_ssh_session, run_ansible_playbook_commands)
 
     print("Done")
 
