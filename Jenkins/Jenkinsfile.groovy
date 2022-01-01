@@ -3,7 +3,7 @@ dockerRegistry = 'https://registry.hub.docker.com/'
 dockerRepo = 'benbense/kandula-app'
 dockerVer = 'v1.0'
 jenkinsCredID = 'dockerhub-benbense'
-githubRepo = 'benbense/kandula-app.git'
+githubRepo = 'benbense/kandula-project-app'
 githubCredID = 'github-benbense'
 githubBranch = 'mid-project'
 
