@@ -34,6 +34,9 @@ On the deploying station the only prerequisite is Python 3 and the pip packages 
 
 Use `pip install -r requirements.txt` to install them.
 
+Also, to completely fill the `.tfvars` file you will also need:
+- Terrafrom Cloud Account with an existing organization.
+- Slack Webhook URL for notifications.
 
 
 ## Deploying Instructions 
