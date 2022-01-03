@@ -1,4 +1,4 @@
-<p align="center"><img width="250px" src="Kandula.png"></p>
+<p align="center"><img width="250px" src="KandulaLogo.png"></p>
 
 <h1 align="center">Kandula</h1>
 
