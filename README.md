@@ -1,6 +1,7 @@
-<p align="center"><img width="300px" src="https://static.wixstatic.com/media/70129d_012e0994c5ad44979e261f8d59f9df5a~mv2.png/v1/fill/w_295,h_137,al_c,q_85,usm_0.66_1.00_0.01/Layer_1.webp" alt="RGBMaster"></p>
+<p align="center"><img width="250px" src="Kandula.png"></p>
 
-# Kandula 🐘
+<h1 align="center">Kandula</h1>
+
 > An OpSchool Project for Cloud deployment.
 
 ## Table of Contents
