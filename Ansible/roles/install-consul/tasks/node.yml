@@ -1,0 +1,5 @@
+---
+- name: Create Consul server config.json
+  copy:
+    src: consul_node_config.json
+    dest: /etc/consul.d/config.json

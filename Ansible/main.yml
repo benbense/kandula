@@ -1,0 +1,37 @@
+---
+- hosts: Project_Name_kandula
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  pre_tasks:
+    - name: Install AWS Facts Gathering Dependencies
+      apt:
+        name:
+          - python3-pip
+        update_cache: yes
+        state: present
+
+    - name: Install boto3 pip
+      pip:
+        name: boto3
+
+    - ec2_metadata_facts:
+    - ec2_instance_info:
+        instance_ids: "{{ ansible_ec2_instance_id }}"
+        region: "{{ ansible_ec2_placement_region }}"
+      register: instance_info
+
+    - name: Save Instance Info
+      set_fact:
+        InstanceName: "{{ instance_info.instances | map(attribute='tags.Name') | list | join('\n') }}"
+        is_consul_monitored: "{{ instance_info.instances | map(attribute='tags.is_consul_monitored') | list | join('\n') }}"
+        service_role: "{{ instance_info.instances | map(attribute='tags.service_role') | list | join('\n') }}"
+        instance_type: "{{ instance_info.instances | map(attribute='tags.instance_type') | list | join('\n') }}"
+        service: "{{ instance_info.instances | map(attribute='tags.service') | list | join('\n') }}"
+
+  roles:
+    - role: install-consul
+      when: is_consul_monitored == true
+    - role: install-jenkins
+      when: service == "jenkins"

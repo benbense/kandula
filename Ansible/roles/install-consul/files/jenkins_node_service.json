@@ -1,0 +1,19 @@
+{
+  "services": [
+    {
+      "name": "jenkins_node",
+      "tags": [
+        "CICD"
+      ],
+      "port": 22,
+      "checks": [
+        {
+          "name": "tcp-22",
+          "tcp": "localhost:22",
+          "interval": "5s",
+          "timeout": "10s"
+        }
+      ]
+    }
+  ]
+}

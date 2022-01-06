@@ -1,0 +1,40 @@
+---
+- name: Create Jenkins Folders
+  file:
+    path: /home/ubuntu/jenkins/config
+    state: directory
+    group: "{{ docker_group }}"
+    mode: "0777"
+
+- name: Start Jenkins Container
+  community.docker.docker_container:
+    name: jenkins
+    image: jenkins/jenkins
+    state: started
+    restart_policy: always
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    env:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    volumes:
+      - /home/ubuntu/jenkins/config:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+- name: Install Jenkins Plugins
+  shell: docker exec jenkins /bin/bash -c '/usr/local/bin/install-plugins.sh {{ item }}'
+  with_items:
+    [
+      "build-pipeline-plugin",
+      "ssh-slaves",
+      "github-branch-source",
+      "blueocean",
+      "slack",
+      "build-monitor-plugin",
+      "docker-workflow",
+      "kubernetes-cd",
+    ]
+  changed_when: true
+
+- name: Restart Jenkins Container
+  shell: docker restart jenkins

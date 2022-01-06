@@ -1,0 +1,5 @@
+---
+# defaults file for install-consul
+dnsmasq_config_path: /etc/dnsmasq.d/10-consul
+resolved_config_path: /etc/systemd/resolved.conf
+consul_url: https://releases.hashicorp.com/consul/1.11.1/consul_1.11.1_linux_amd64.zip

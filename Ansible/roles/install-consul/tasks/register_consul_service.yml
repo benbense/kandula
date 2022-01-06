@@ -1,0 +1,23 @@
+---
+- name: Register Jenkins Server service
+  when: service == "jenkins" and instance_type == "server"
+  copy:
+    src: jenkins_server_service.json
+    dest: /etc/consul.d/jenkins_server_service.json
+
+- name: Register Jenkins Node service
+  when: service == "jenkins" and instance_type == "node"
+  copy:
+    src: jenkins_node_service.json
+    dest: /etc/consul.d/jenkins_node_service.json
+
+- name: Register Bastion Host service
+  when: service == "bastion" and instance_type == "server"
+  copy:
+    src: bastion_server_service.json
+    dest: /etc/consul.d/bastion_server_service.json
+
+- name: Reload Consul service
+  systemd:
+    name: consul.service
+    state: reloaded
