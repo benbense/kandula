@@ -36,6 +36,9 @@ In order to deploy the environemt a few prerequisites are mandatory, the deploym
 
 You should fill in all of the required variables as referenced in the [Variables References Table](#variables-references-table).
 
+- AWS CLI
+  - [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+  - [Configure AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
 - Terrafrom Cloud
   - [Create organization](https://www.terraform.io/cloud-docs/users-teams-organizations/organizations#creating-organizations)
   - [Create user API token](https://www.terraform.io/cloud-docs/users-teams-organizations/users#api-tokens)
@@ -47,7 +50,10 @@ You should fill in all of the required variables as referenced in the [Variables
 - Slack
   - Slack Webhook URL
 
-After all requirements mentioned above make sure your `vars.txt` file is filled up correctly.
+After all requirements mentioned above have been completed make sure your `vars.txt` file is filled up correctly.
+
+> Note:
+> If you are creating an organization with a different name than `kandula` you will need also to change the name inside the [VPC](https://github.com/benbense/kandula/blob/9e7fd64c33cbefde38fe39d2a5f370f93ed041a3/Terraform/workspaces/VPC/main.tf#L2) & [Servers](https://github.com/benbense/kandula/blob/9e7fd64c33cbefde38fe39d2a5f370f93ed041a3/Terraform/workspaces/Servers/main.tf#L11) modules manually (This is because Terraform modules must a full path without variables inside them)
 
 
 ## Terraform Deploying Instructions 
@@ -104,5 +110,4 @@ Notes:
 | k8s_service_account_namespace  | Kubernetes Service Account Namespace                                       | str  |
 | k8s_service_account_name       | Kubernetes Service Account Name                                            | str  |
 | auto_apply                     | Whether to automatically apply changes when a Terraform plan is successful | bool |
-| consul_servers_count           | How much Consul servers to create (1, 3, 5)                                | int  |
 | jenkins_nodes_count            | How much Jenkins nodes to create (Keep it on 2 only)                       | int  |
