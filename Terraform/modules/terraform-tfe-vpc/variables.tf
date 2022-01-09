@@ -3,7 +3,7 @@ variable "tfe_organization_name" {
   type        = string
 }
 
-variable "github_user" {
+variable "github_username" {
   description = "Github Username"
   type        = string
 }
@@ -49,7 +49,7 @@ variable "vpc_workspace_name" {
   type        = string
 }
 
-variable "workspace_repo_identifier" {
+variable "github_repository_name" {
   description = "Github repo identifier for Workspace creation"
   type        = string
 }
