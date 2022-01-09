@@ -1,16 +1,14 @@
 import boto3
-import paramiko
 import sys
 import os
 import time
-
-from paramiko.rsakey import RSAKey
-from scp import SCPClient
 import requests
+import shutil
 import json
-from requests.models import Response
-
+import paramiko
+from scp import SCPClient
 from requests.sessions import Session
+from paramiko.rsakey import RSAKey
 
 
 def log_function(func):
@@ -142,8 +140,8 @@ def ssh_client_connection_throgh_bastion_host(bastion_ssh_session, bastion_host_
 @log_function
 def deploy_terraform(var_file):
     os.chdir("Terraform")
-    os.system
-    os.system(f"terraform apply -var-file {var_file} --auto-approve")
+    os.system("terraform init")
+    os.system(f"terraform apply -var-file vars.tfvars --auto-approve")
     os.chdir("..")
 
 
@@ -222,6 +220,13 @@ def apply_run_by_id(session: Session, run_id):
 
 
 @log_function
+def create_tfvars_file(vars_file_path):
+    file_path = shutil.copy(
+        vars_file_path, os.path.join('Terraform', 'vars.tfvars'))
+    return file_path
+
+
+@log_function
 def get_terraform_vars_from_file(terraform_var_file_path):
     terraform_vars = {}
     with open(terraform_var_file_path, "r") as terraform_var_file:
@@ -232,6 +237,7 @@ def get_terraform_vars_from_file(terraform_var_file_path):
             if line_var_value[0] == '"' and line_var_value[-1] == '"':
                 line_var_value = line_var_value[1:-1]
             terraform_vars[line_var_name] = line_var_value
+
     return terraform_vars
 
 
@@ -311,8 +317,8 @@ def run_ansible(terraform_vars):
     bastion_host_public_ip = get_bastion_host_ip(ec2, get_public_ip=True)
     bastion_host_private_ip = get_bastion_host_ip(ec2, get_public_ip=False)
     ansible_host_private_ip = get_ansible_host_private_ip(ec2)
-    consul_servers_amount = get_consul_servers_amount(ec2)
     aws_default_region = terraform_vars['aws_default_region']
+    consul_servers_amount = 3
 
     bastion_ssh_session = ssh_client_connection(
         bastion_host_public_ip, private_key_file_path)
@@ -356,11 +362,12 @@ def run_ansible(terraform_vars):
     print("Done")
 
 
-def run(terraform_var_file_path):
+def run(vars_file_path):
+    terraform_var_file_path = create_tfvars_file(vars_file_path)
     terraform_vars = get_terraform_vars_from_file(terraform_var_file_path)
     run_terraform(terraform_var_file_path, terraform_vars)
     run_ansible(terraform_vars)
 
 
-terraform_var_file_path = sys.argv[1]
-run(terraform_var_file_path)
+vars_file_path = sys.argv[1]
+run(vars_file_path)
