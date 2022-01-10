@@ -27,7 +27,7 @@ variable "aws_default_region" {
   type        = string
 }
 variable "kubernetes_workspace_name" {
-  description = "servers Workspace name"
+  description = "Kubernetes Workspace name"
   type        = string
 }
 variable "vpc_workspace_name" {

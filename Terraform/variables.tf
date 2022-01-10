@@ -9,7 +9,7 @@ variable "tfe_token" {
 variable "github_username" {
   description = "Github Username"
   type        = string
-  default = "benbense"
+  default     = "benbense"
 }
 variable "github_branch" {
   description = "Github Branch Name"
@@ -88,7 +88,7 @@ variable "tfe_organization_email" {
 variable "github_repository_name" {
   description = "Github repo identifier for Workspace creation"
   type        = string
-  default = "kandula"
+  default     = "kandula"
 }
 
 variable "servers_workspace_directory" {
@@ -146,7 +146,7 @@ variable "kubernetes_workspace_directory" {
 }
 
 variable "kubernetes_workspace_name" {
-  description = "servers Workspace name"
+  description = "Kubernetes Workspace name"
   type        = string
   default     = "K8s-Workspace"
 }

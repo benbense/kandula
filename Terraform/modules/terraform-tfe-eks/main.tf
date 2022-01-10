@@ -13,6 +13,14 @@ resource "tfe_workspace" "kubernetes" {
   queue_all_runs      = false
 }
 
+resource "tfe_variable" "kubernetes_workspace_name" {
+  key          = "kubernetes_workspace_name"
+  value        = var.kubernetes_workspace_name
+  description  = "Kubernetes Workspace name"
+  workspace_id = tfe_workspace.kubernetes.id
+  category     = "terraform"
+}
+
 resource "tfe_variable" "aws_region" {
   key          = "aws_region"
   value        = var.aws_default_region
