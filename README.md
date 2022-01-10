@@ -53,7 +53,7 @@ You should fill in all of the required variables as referenced in the [Variables
 After all requirements mentioned above have been completed make sure your `vars.txt` file is filled up correctly.
 
 > Note:
-> If you are creating an organization with a different name than `kandula` you will need also to change the name inside the [VPC](https://github.com/benbense/kandula/blob/9e7fd64c33cbefde38fe39d2a5f370f93ed041a3/Terraform/workspaces/VPC/main.tf#L2) & [Servers](https://github.com/benbense/kandula/blob/9e7fd64c33cbefde38fe39d2a5f370f93ed041a3/Terraform/workspaces/Servers/main.tf#L11) modules manually (This is because Terraform modules must a full path without variables inside them)
+> If you are creating an organization with a different name than `kandula` you will need also to change the name inside the [VPC](https://github.com/benbense/kandula/blob/9e7fd64c33cbefde38fe39d2a5f370f93ed041a3/Terraform/workspaces/VPC/main.tf#L2) & [Servers](https://github.com/benbense/kandula/blob/9e7fd64c33cbefde38fe39d2a5f370f93ed041a3/Terraform/workspaces/Servers/main.tf#L11) modules manually, and the `tfe_organization_name` variable. (This is because Terraform modules must a full path without variables inside them)
 
 
 ## Terraform Deploying Instructions 
