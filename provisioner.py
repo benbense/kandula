@@ -190,6 +190,19 @@ def get_last_run_by_workspace(session: Session, workspace_id):
 
 
 @log_function
+def get_organization_variables(session: Session):
+    response = session.get(
+        f"https://app.terraform.io/api/v2/vars"
+    ).json()
+    vars_dict = {}
+    for var in response['data']:
+        dict_key = var['attributes']['key']
+        dict_value = var['attributes']['value']
+        vars_dict[dict_key] = dict_value
+    return vars_dict
+
+
+@log_function
 def plan_by_workspace(session: Session, workspace_id):
     payload = json.dumps(
         {
@@ -256,6 +269,28 @@ def wait_for_plan_status(session: Session, run_id, statuses):
                 return
 
 
+def get_workspace_outputs(session: Session, workspace_id):
+    response = session.get(
+        f"https://app.terraform.io/api/v2/workspaces/{workspace_id}/current-state-version")
+    if response.status_code != 200:
+        exit()
+    else:
+        response_data = response.json()
+        state_id = response_data['data']['id']
+        response = session.get(
+            f"https://app.terraform.io/api/v2/state-versions/{state_id}/outputs")
+        if response.status_code != 200:
+            exit()
+        else:
+            response_data = response.json()
+            outputs_dict = {}
+            for output in response_data['data']:
+                output_key = output['data']['attributes']['name']
+                output_value = output['data']['attributes']['value']
+                outputs_dict[output_key] = output_value
+        return outputs_dict
+
+
 @log_function
 # TODO Change from vpc_worspace to global value
 def run_plan_to_completion(session, organization_name, workspace_name):
@@ -274,17 +309,22 @@ def run_plan_to_completion(session, organization_name, workspace_name):
     apply_run_by_id(session, vpc_plan_id)
     wait_for_plan_status(session, vpc_plan_id, [
                          "applied", "planned_and_finished"])
+    # outputs = get_workspace_outputs(session, vpc_workspace["id"])
 
 
 ############################################################################################
 
 
 @log_function
-def run_terraform(terraform_var_file_path, terraform_vars):
+def run_terraform(terraform_var_file_path, terraform_txt_vars):
     deploy_terraform(terraform_var_file_path)
 
     time.sleep(5)
-    session = create_tfe_api_session(terraform_vars["tfe_token"])
+    session = create_tfe_api_session(terraform_txt_vars["tfe_token"])
+    terraform_cloud_vars = get_organization_variables(session)
+    terraform_vars = {}
+    terraform_vars.update(terraform_txt_vars)
+    terraform_vars.update(terraform_cloud_vars)
 
     run_plan_to_completion(
         session,
@@ -369,5 +409,6 @@ def run(vars_file_path):
     run_ansible(terraform_vars)
 
 
-vars_file_path = sys.argv[1]
+# vars_file_path = sys.argv[1]
+vars_file_path = f"C:\\Keys\\vars.txt"
 run(vars_file_path)
