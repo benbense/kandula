@@ -18,7 +18,7 @@ resource "tfe_variable" "kubernetes_workspace_name" {
   value        = var.kubernetes_workspace_name
   description  = "Kubernetes Workspace name"
   workspace_id = tfe_workspace.kubernetes.id
-  category     = "terraform"
+  category     = "env"
 }
 
 resource "tfe_variable" "aws_region" {
