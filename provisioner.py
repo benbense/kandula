@@ -3,14 +3,14 @@ import paramiko
 import sys
 import os
 import time
-
 from paramiko.rsakey import RSAKey
 from scp import SCPClient
 import requests
 import json
-from requests.models import Response
-
 from requests.sessions import Session
+import sewer.client
+from sewer.crypto import AcmeKey
+from OpenSSL import crypto, SSL
 
 
 def log_function(func):
@@ -33,6 +33,22 @@ def log_function(func):
     return log
 
 
+def generate_ssl_cert():
+    KEY_FILE = "Terraform/private.key"
+    CERT_FILE = "Terraform/selfsigned.crt"
+    k = crypto.PKey()
+    k.generate_key(crypto.TYPE_RSA, 4096)
+    cert = crypto.X509()
+    cert.set_issuer(cert.get_subject())
+    cert.set_pubkey(k)
+    cert.sign(k, 'sha512')
+    with open(CERT_FILE, "w") as f:
+        f.write(crypto.dump_certificate(
+            crypto.FILETYPE_PEM, cert).decode("utf-8"))
+    with open(KEY_FILE, "w") as f:
+        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
+
+
 def progress(filename, size, sent):
     sys.stdout.write(
         "Copying: %s - Progress: %.2f%%   \n"
@@ -42,8 +58,7 @@ def progress(filename, size, sent):
 
 def get_eks_cluster_name(eks):
     cluster = eks.list_clusters(maxResults=1)
-    # return cluster["clusters"][0]
-    return 'moshe'
+    return cluster["clusters"][0]
 
 
 def get_consul_servers_amount(ec2):
@@ -304,10 +319,12 @@ def run_ansible(terraform_vars):
 
 
 def run(terraform_var_file_path):
+    generate_ssl_cert()
     terraform_vars = get_terraform_vars_from_file(terraform_var_file_path)
     run_terraform(terraform_var_file_path, terraform_vars)
     run_ansible(terraform_vars)
 
 
-terraform_var_file_path = sys.argv[1]
+# terraform_var_file_path = sys.argv[1]
+terraform_var_file_path = ""
 run(terraform_var_file_path)
