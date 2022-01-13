@@ -6,6 +6,10 @@
   name: Install Kubernetes
   when: instance_type == "node"
 
+- include_tasks: trivy.yml
+  name: Install Trivy
+  when: instance_type == "node"
+
 - include_tasks: server.yml
   when: instance_type == "server"
   name: Install Jenkins Server
