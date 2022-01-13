@@ -63,8 +63,31 @@ After all requirements mentioned above have been completed make sure your `vars.
 - Run `python provisioner.py <path/of/vars.txt>`
 
 ## Jenkins Deploying Instructions 
-- WIP
+- Required Secrets:
+<center>
 
+| ID                 | Description                       | Values              |
+| ------------------ | --------------------------------- | ------------------- |
+| dockerhub-benbense | DockerHub User                    | Username + Password |
+| github-benbense    | Github User                       | SSH Username + Key  |
+| aws-ubuntu         | SSH credentials for Jenkins Nodes | SSH Username + Key  |
+
+</center>
+
+- Add Nodes
+  - Name = Node1... Node2... etc.
+  - Remote Root Directory = /home/ubuntu/jenkins
+  - Label = docker
+  - Launch Method = SSH (Use `aws-ubuntu` credentials that you have created)
+  - Host Key Verification Strategy =  None
+
+- Create Pipeline
+  - SCM = Git
+  - Repository URL = git@github.com:benbense/kandula-project-app.git
+  - Credentials = Github (Use `github-benbense` credentials that you have created)
+  - Script Path = Jenkinsfile.groovy
+
+> Note: Pipeline should be ran twice at first since there are parameters configuration.
 ## Variables References Table
 
 This table will help you determine whcih value should be in each variables inside the `vars.example.txt` file.
