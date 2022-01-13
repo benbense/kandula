@@ -34,11 +34,15 @@ def log_function(func):
 
 
 def generate_ssl_cert():
-    KEY_FILE = "Terraform/private.key"
-    CERT_FILE = "Terraform/selfsigned.crt"
+    KEY_FILE = "Terraform/private.pem"
+    CERT_FILE = "Terraform/selfsigned.pem"
     k = crypto.PKey()
     k.generate_key(crypto.TYPE_RSA, 4096)
     cert = crypto.X509()
+    cert.set_serial_number(1000)
+    cert.gmtime_adj_notBefore(0)
+    cert.gmtime_adj_notAfter(10*365*24*60*60)
+    cert.get_subject().CN = "Kandula"
     cert.set_issuer(cert.get_subject())
     cert.set_pubkey(k)
     cert.sign(k, 'sha512')
@@ -265,6 +269,8 @@ def run_terraform(terraform_var_file_path, terraform_vars):
         terraform_vars["tfe_organization_name"],
         terraform_vars["servers_workspace_name"],
     )
+
+    # Add EKS Creation
 
 
 @log_function
