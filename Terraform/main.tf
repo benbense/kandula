@@ -14,6 +14,8 @@ module "vpc" {
   github_repository_name  = var.github_repository_name
   vpc_workspace_directory = var.vpc_workspace_directory
   auto_apply              = var.auto_apply
+  cert_body               = "${data.template_file.cert_body.rendered}"
+  cert_private_key        = "${data.template_file.cert_private_key.rendered}"
 }
 
 module "servers" {
@@ -58,23 +60,8 @@ module "eks" {
   auto_apply                     = var.auto_apply
   k8s_service_account_namespace  = var.k8s_service_account_namespace
   k8s_service_account_name       = var.k8s_service_account_name
-<<<<<<< HEAD
-
-}
-
-# resource "tfe_run_trigger" "servers_trigger" {
-#   workspace_id  = module.servers.servers_workspace_id
-#   sourceable_id = module.vpc.vpc_workspace_id
-# }
-
-# resource "tfe_run_trigger" "kubernetes_trigger" {
-#   workspace_id  = module.eks.kubernetes_workspace_id
-#   sourceable_id = module.vpc.vpc_workspace_id
-# }
-=======
   servers_workspace_name         = var.servers_workspace_name
 }
->>>>>>> review-fix
 
 resource "tls_private_key" "server_key" {
   algorithm = "RSA"
@@ -88,4 +75,12 @@ resource "aws_key_pair" "server_key" {
 resource "local_file" "server_key" {
   sensitive_content = tls_private_key.server_key.private_key_pem
   filename          = var.private_key_path
+}
+
+data "template_file" "cert_body" {
+  template = "${file("SSL/selfsigned.pem")}"
+}
+
+data "template_file" "cert_body" {
+  template = "${file("SSL/private.pem")}"
 }
