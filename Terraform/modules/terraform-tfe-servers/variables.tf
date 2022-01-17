@@ -2,7 +2,7 @@ variable "tfe_organization_name" {
   description = "Terrafrom Cloud Organization Name"
   type        = string
 }
-variable "github_user" {
+variable "github_username" {
   description = "Github Username"
   type        = string
 }
@@ -45,7 +45,7 @@ variable "vpc_workspace_name" {
   description = "VPC Workspace name"
   type        = string
 }
-variable "workspace_repo_identifier" {
+variable "github_repository_name" {
   description = "Github repo identifier for Workspace creation"
   type        = string
 }

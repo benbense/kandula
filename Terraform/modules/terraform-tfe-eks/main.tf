@@ -2,7 +2,7 @@ resource "tfe_workspace" "kubernetes" {
   name         = var.kubernetes_workspace_name
   organization = var.tfe_organization_name
   vcs_repo {
-    identifier     = "${var.github_user}/${var.workspace_repo_identifier}"
+    identifier     = "${var.github_username}/${var.github_repository_name}"
     oauth_token_id = var.oauth_token_id
     branch         = var.github_branch
   }
@@ -11,6 +11,17 @@ resource "tfe_workspace" "kubernetes" {
   working_directory   = var.kubernetes_workspace_directory
   auto_apply          = var.auto_apply
   queue_all_runs      = false
+<<<<<<< HEAD
+=======
+}
+
+resource "tfe_variable" "kubernetes_workspace_name" {
+  key          = "kubernetes_workspace_name"
+  value        = var.kubernetes_workspace_name
+  description  = "Kubernetes Workspace name"
+  workspace_id = tfe_workspace.kubernetes.id
+  category     = "env"
+>>>>>>> review-fix
 }
 
 resource "tfe_variable" "aws_region" {
@@ -28,6 +39,15 @@ resource "tfe_variable" "vpc_workspace_name" {
   workspace_id = tfe_workspace.kubernetes.id
   category     = "terraform"
 }
+
+resource "tfe_variable" "servers_workspace_name" {
+  key          = "servers_workspace_name"
+  value        = var.servers_workspace_name
+  description  = "Servers Workspace Name"
+  workspace_id = tfe_workspace.kubernetes.id
+  category     = "terraform"
+}
+
 
 resource "tfe_variable" "tfe_organization_name" {
   key          = "tfe_organization_name"

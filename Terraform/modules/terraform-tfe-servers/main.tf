@@ -2,7 +2,7 @@ resource "tfe_workspace" "servers" {
   name         = var.servers_workspace_name
   organization = var.tfe_organization_name
   vcs_repo {
-    identifier     = "${var.github_user}/${var.workspace_repo_identifier}"
+    identifier     = "${var.github_username}/${var.github_repository_name}"
     oauth_token_id = var.oauth_token_id
     branch         = var.github_branch
   }

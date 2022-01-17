@@ -1,16 +1,15 @@
 import boto3
-import paramiko
 import sys
 import os
 import time
-from paramiko.rsakey import RSAKey
-from scp import SCPClient
 import requests
+import shutil
 import json
+import paramiko
+from scp import SCPClient
 from requests.sessions import Session
-import sewer.client
-from sewer.crypto import AcmeKey
-from OpenSSL import crypto, SSL
+from paramiko.rsakey import RSAKey
+from OpenSSL import crypto
 
 
 def log_function(func):
@@ -61,11 +60,13 @@ def progress(filename, size, sent):
 
 
 def get_eks_cluster_name(eks):
+    # TODO Get cluster by tag
     cluster = eks.list_clusters(maxResults=1)
     return cluster["clusters"][0]
 
 
 def get_consul_servers_amount(ec2):
+    # TODO Change for loop to len
     count = 0
     running_instances = ec2.instances.filter(
         Filters=[
@@ -78,15 +79,29 @@ def get_consul_servers_amount(ec2):
     return count
 
 
-def get_bastion_host_ip(ec2):
+def get_bastion_host_ip(ec2, get_public_ip: bool):
     running_instances = ec2.instances.filter(
         Filters=[
-            {"Name": "tag:service_role", "Values": ["bastion"]},
+            {"Name": "tag:service", "Values": ["bastion"]},
             {"Name": "instance-state-name", "Values": ["running"]},
         ]
     )
     for instance in running_instances:
-        return instance.public_ip_address
+        if get_public_ip:
+            return instance.public_ip_address
+        else:
+            return instance.private_ip_address
+
+
+def get_ansible_host_private_ip(ec2):
+    running_instances = ec2.instances.filter(
+        Filters=[
+            {"Name": "tag:service", "Values": ["ansible"]},
+            {"Name": "instance-state-name", "Values": ["running"]},
+        ]
+    )
+    for instance in running_instances:
+        return instance.private_ip_address
 
 
 def ssh_client_connection(host_ip, private_key_file_path):
@@ -121,11 +136,33 @@ def ssh_run_commands(ssh_session, commands: list):
             print(line, end="")
 
 
+def ssh_client_connection_throgh_bastion_host(bastion_ssh_session, bastion_host_private_ip, target_host_ip, ssh_user_name, private_key_file_path):
+    try:
+        bastion_host_transport = bastion_ssh_session.get_transport()
+        src_addr = (bastion_host_private_ip, 22)
+        dest_addr = (target_host_ip, 22)
+        bastion_host_channel = bastion_host_transport.open_channel(
+            "direct-tcpip", dest_addr, src_addr)
+
+        target_host_ssh_client = paramiko.SSHClient()
+        target_host_ssh_client.set_missing_host_key_policy(
+            paramiko.AutoAddPolicy())
+        target_host_ssh_client.connect(target_host_ip, username=ssh_user_name,
+                                       key_filename=private_key_file_path, sock=bastion_host_channel)
+
+        return target_host_ssh_client
+
+    except:
+        print(
+            f"Error Connecting To: {0} Through Bastion Host".format(target_host_ip))
+        exit()
+
+
 @log_function
 def deploy_terraform(var_file):
     os.chdir("Terraform")
-    os.system
-    os.system(f"terraform apply -var-file {var_file} --auto-approve")
+    os.system("terraform init")
+    os.system(f"terraform apply -var-file vars.tfvars --auto-approve")
     os.chdir("..")
 
 
@@ -174,6 +211,19 @@ def get_last_run_by_workspace(session: Session, workspace_id):
 
 
 @log_function
+def get_organization_variables(session: Session):
+    response = session.get(
+        f"https://app.terraform.io/api/v2/vars"
+    ).json()
+    vars_dict = {}
+    for var in response['data']:
+        dict_key = var['attributes']['key']
+        dict_value = var['attributes']['value']
+        vars_dict[dict_key] = dict_value
+    return vars_dict
+
+
+@log_function
 def plan_by_workspace(session: Session, workspace_id):
     payload = json.dumps(
         {
@@ -204,6 +254,13 @@ def apply_run_by_id(session: Session, run_id):
 
 
 @log_function
+def create_tfvars_file(vars_file_path):
+    file_path = shutil.copy(
+        vars_file_path, os.path.join('Terraform', 'vars.tfvars'))
+    return file_path
+
+
+@log_function
 def get_terraform_vars_from_file(terraform_var_file_path):
     terraform_vars = {}
     with open(terraform_var_file_path, "r") as terraform_var_file:
@@ -218,7 +275,7 @@ def get_terraform_vars_from_file(terraform_var_file_path):
 
 
 @log_function
-def wait_for_plan_status(session: Session, run_id, status):
+def wait_for_plan_status(session: Session, run_id, statuses):
     # TODO - add max retries
     while True:
         time.sleep(3)
@@ -228,11 +285,34 @@ def wait_for_plan_status(session: Session, run_id, status):
             exit()
         else:
             response_data = response.json()
-            if response_data["data"]["attributes"]["status"] == status:
+            if response_data["data"]["attributes"]["status"] in statuses:
                 return
 
 
+def get_workspace_outputs(session: Session, workspace_id):
+    response = session.get(
+        f"https://app.terraform.io/api/v2/workspaces/{workspace_id}/current-state-version")
+    if response.status_code != 200:
+        exit()
+    else:
+        response_data = response.json()
+        state_id = response_data['data']['id']
+        response = session.get(
+            f"https://app.terraform.io/api/v2/state-versions/{state_id}/outputs")
+        if response.status_code != 200:
+            exit()
+        else:
+            response_data = response.json()
+            outputs_dict = {}
+            for output in response_data['data']:
+                output_key = output['data']['attributes']['name']
+                output_value = output['data']['attributes']['value']
+                outputs_dict[output_key] = output_value
+        return outputs_dict
+
+
 @log_function
+# TODO Change from vpc_worspace to global value
 def run_plan_to_completion(session, organization_name, workspace_name):
     vpc_workspace = get_tfe_workspace_by_names(
         session,
@@ -244,19 +324,27 @@ def run_plan_to_completion(session, organization_name, workspace_name):
 
     vpc_plan_id = vpc_plan["data"]["id"]
 
-    wait_for_plan_status(session, vpc_plan_id, "planned")
+    wait_for_plan_status(session, vpc_plan_id, [
+                         "planned", "planned_and_finished"])
     apply_run_by_id(session, vpc_plan_id)
-    wait_for_plan_status(session, vpc_plan_id, "applied")
+    wait_for_plan_status(session, vpc_plan_id, [
+                         "applied", "planned_and_finished"])
+    # outputs = get_workspace_outputs(session, vpc_workspace["id"])
 
 
 ############################################################################################
 
 
 @log_function
-def run_terraform(terraform_var_file_path, terraform_vars):
+def run_terraform(terraform_var_file_path, terraform_txt_vars):
     deploy_terraform(terraform_var_file_path)
 
-    session = create_tfe_api_session(terraform_vars["tfe_token"])
+    time.sleep(5)
+    session = create_tfe_api_session(terraform_txt_vars["tfe_token"])
+    terraform_cloud_vars = get_organization_variables(session)
+    terraform_vars = {}
+    terraform_vars.update(terraform_txt_vars)
+    terraform_vars.update(terraform_cloud_vars)
 
     run_plan_to_completion(
         session,
@@ -270,7 +358,11 @@ def run_terraform(terraform_var_file_path, terraform_vars):
         terraform_vars["servers_workspace_name"],
     )
 
-    # Add EKS Creation
+    run_plan_to_completion(
+        session,
+        terraform_vars["tfe_organization_name"],
+        terraform_vars["kubernetes_workspace_name"],
+    )
 
 
 @log_function
@@ -282,16 +374,22 @@ def run_ansible(terraform_vars):
     eks = boto3.client("eks")
 
     eks_cluster_name = get_eks_cluster_name(eks)
-    bastion_host_ip = get_bastion_host_ip(ec2)
-    consul_servers_amount = get_consul_servers_amount(ec2)
+    bastion_host_public_ip = get_bastion_host_ip(ec2, get_public_ip=True)
+    bastion_host_private_ip = get_bastion_host_ip(ec2, get_public_ip=False)
+    ansible_host_private_ip = get_ansible_host_private_ip(ec2)
+    aws_default_region = terraform_vars['aws_default_region']
+    consul_servers_amount = 3
 
     bastion_ssh_session = ssh_client_connection(
-        bastion_host_ip, private_key_file_path)
+        bastion_host_public_ip, private_key_file_path)
+
+    ansible_ssh_session = ssh_client_connection_throgh_bastion_host(
+        bastion_ssh_session, bastion_host_private_ip, ansible_host_private_ip, "ubuntu", private_key_file_path)
 
     scp_file_copy(
-        bastion_ssh_session, private_key_file_path, "/home/ubuntu/.ssh/id_rsa"
+        ansible_ssh_session, private_key_file_path, "/home/ubuntu/.ssh/id_rsa"
     )
-    scp_file_copy(bastion_ssh_session, ansible_files, "~/")
+    scp_file_copy(ansible_ssh_session, ansible_files, "~/")
 
     ssh_commands = [
         "chmod 600 /home/ubuntu/.ssh/id_rsa",
@@ -313,24 +411,26 @@ def run_ansible(terraform_vars):
     ]
 
     run_ansible_playbook_commands = [
-        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} AWS_SECRET_ACCESS_KEY=GPklO7zH+ckbS5OsuM+sQJeByfIaAngyUiIytrcD, AWS_ACCESS_KEY_ID=AKIAVVACADPMY3TRM27R"'
+        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} aws_default_region={aws_default_region}"'
     ]
 
-    ssh_run_commands(bastion_ssh_session, ssh_commands)
-    ssh_run_commands(bastion_ssh_session, install_ansible_commands)
-    ssh_run_commands(bastion_ssh_session, install_ansible_modules)
-    ssh_run_commands(bastion_ssh_session, run_ansible_playbook_commands)
+    ssh_run_commands(ansible_ssh_session, ssh_commands)
+    ssh_run_commands(ansible_ssh_session, install_ansible_commands)
+    ssh_run_commands(ansible_ssh_session, install_ansible_modules)
+    ssh_run_commands(ansible_ssh_session, run_ansible_playbook_commands)
 
     print("Done")
 
 
-def run(terraform_var_file_path):
-    generate_ssl_cert()
+def run(vars_file_path):
+
+    terraform_var_file_path = create_tfvars_file(vars_file_path)
     terraform_vars = get_terraform_vars_from_file(terraform_var_file_path)
+    generate_ssl_cert()
     run_terraform(terraform_var_file_path, terraform_vars)
     run_ansible(terraform_vars)
 
 
-# terraform_var_file_path = sys.argv[1]
-terraform_var_file_path = ""
-run(terraform_var_file_path)
+# vars_file_path = sys.argv[1]
+vars_file_path = f"C:\\Keys\\vars.txt"
+run(vars_file_path)
