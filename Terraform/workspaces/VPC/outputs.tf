@@ -28,3 +28,7 @@ output "iam_role_arn" {
   description = "ARN Of Describe Instances Role"
   value       = module.vpc.iam_role_arn
 }
+output "kandula_ssl_cert" {
+  description = "ARN of SSL Certificate"
+  value       = module.vpc.kandula_ssl_cert
+}

@@ -6,23 +6,27 @@ variable "tfe_token" {
   description = "Terraform Cloud API Token"
   type        = string
 }
-variable "github_user" {
+variable "github_username" {
   description = "Github Username"
   type        = string
+  default     = "benbense"
 }
 variable "github_branch" {
   description = "Github Branch Name"
   type        = string
+  default     = "main"
 }
 
 variable "availability_zones" {
   description = "Availability zones to account for"
   type        = number
+  default     = 2
 }
 
 variable "vpc_name" {
   description = "VPC Name"
   type        = string
+  default     = "Kandula"
 }
 
 variable "aws_acess_key" {
@@ -45,25 +49,30 @@ variable "github_pat" {
 variable "cidr_size" {
   description = "CIDR Size"
   type        = string
+  default     = "10.0.0.0/16"
 }
 
 variable "instance_type" {
   description = "Instance type"
   type        = string
+  default     = "t2.micro"
 }
 
 variable "bucket_name" {
   description = "Bucket name for ALB logs"
   type        = string
+  default     = "kandula-bucket"
 }
 
 variable "servers_workspace_name" {
   description = "servers Workspace Name"
   type        = string
+  default     = "Servers-Workspace"
 }
 variable "vpc_workspace_name" {
   description = "VPC Workspace Name"
   type        = string
+  default     = "VPC-Workspace"
 }
 
 variable "slack_webhook_url" {
@@ -76,38 +85,40 @@ variable "tfe_organization_email" {
   type        = string
 }
 
-variable "workspace_repo_identifier" {
+variable "github_repository_name" {
   description = "Github repo identifier for Workspace creation"
   type        = string
+  default     = "kandula"
 }
 
 variable "servers_workspace_directory" {
-  description = "Working directory for servers module"
+  description = "Directory for servers module"
   type        = string
+  default     = "Terraform/workspaces/Servers"
 }
 
 variable "vpc_workspace_directory" {
-  description = "Working directory for vpc module"
+  description = "Directory for vpc module"
   type        = string
+  default     = "Terraform/workspaces/VPC"
 }
 
 variable "auto_apply" {
   description = "Whether to automatically apply changes when a Terraform plan is successful"
   type        = bool
+  default     = false
 }
 
 variable "consul_servers_count" {
   type        = number
   description = "How much Consul servers to create"
-  validation {
-    condition     = var.consul_servers_count == 1 || var.consul_servers_count == 3 || var.consul_servers_count == 5
-    error_message = "Invalid Consul servers amount, value must be 1 || 3 || 5."
-  }
+  default     = 3
 }
 
 variable "jenkins_nodes_count" {
   type        = number
   description = "How much Jenkins nodes to create"
+  default     = 2
 }
 
 variable "private_key_path" {
@@ -117,21 +128,27 @@ variable "private_key_path" {
 
 
 variable "k8s_service_account_namespace" {
+  type        = string
   description = "Kubernetes Service Account Namespace"
+  default     = "default"
 }
 
 variable "k8s_service_account_name" {
+  type        = string
   description = "Kubernetes Service Account Name"
+  default     = "kandula-sa"
 }
 
 variable "kubernetes_workspace_directory" {
-  description = "Working directory for servers module"
+  description = "Directory for servers module"
   type        = string
+  default     = "Terraform/workspaces/K8s"
 }
 
 variable "kubernetes_workspace_name" {
-  description = "servers Workspace name"
+  description = "Kubernetes Workspace name"
   type        = string
+  default     = "K8s-Workspace"
 }
 
 variable "elb_account_id" {

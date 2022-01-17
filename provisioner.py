@@ -1,16 +1,15 @@
 import boto3
-import paramiko
 import sys
 import os
 import time
-
-from paramiko.rsakey import RSAKey
-from scp import SCPClient
 import requests
+import shutil
 import json
-from requests.models import Response
-
+import paramiko
+from scp import SCPClient
 from requests.sessions import Session
+from paramiko.rsakey import RSAKey
+from OpenSSL import crypto
 
 
 def log_function(func):
@@ -31,6 +30,26 @@ def log_function(func):
         return result
 
     return log
+
+@log_function
+def generate_ssl_cert():
+    KEY_FILE = "Terraform/SSL/private.pem"
+    CERT_FILE = "Terraform/SSL/selfsigned.pem"
+    k = crypto.PKey()
+    k.generate_key(crypto.TYPE_RSA, 4096)
+    cert = crypto.X509()
+    cert.set_serial_number(1000)
+    cert.gmtime_adj_notBefore(0)
+    cert.gmtime_adj_notAfter(10*365*24*60*60)
+    cert.get_subject().CN = "Kandula"
+    cert.set_issuer(cert.get_subject())
+    cert.set_pubkey(k)
+    cert.sign(k, 'sha512')
+    with open(CERT_FILE, "w") as f:
+        f.write(crypto.dump_certificate(
+            crypto.FILETYPE_PEM, cert).decode("utf-8"))
+    with open(KEY_FILE, "w") as f:
+        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
 
 
 def progress(filename, size, sent):
@@ -142,8 +161,8 @@ def ssh_client_connection_throgh_bastion_host(bastion_ssh_session, bastion_host_
 @log_function
 def deploy_terraform(var_file):
     os.chdir("Terraform")
-    os.system
-    os.system(f"terraform apply -var-file {var_file} --auto-approve")
+    os.system("terraform init")
+    os.system(f"terraform apply -var-file vars.tfvars --auto-approve")
     os.chdir("..")
 
 
@@ -192,6 +211,19 @@ def get_last_run_by_workspace(session: Session, workspace_id):
 
 
 @log_function
+def get_organization_variables(session: Session):
+    response = session.get(
+        f"https://app.terraform.io/api/v2/vars"
+    ).json()
+    vars_dict = {}
+    for var in response['data']:
+        dict_key = var['attributes']['key']
+        dict_value = var['attributes']['value']
+        vars_dict[dict_key] = dict_value
+    return vars_dict
+
+
+@log_function
 def plan_by_workspace(session: Session, workspace_id):
     payload = json.dumps(
         {
@@ -219,6 +251,13 @@ def apply_run_by_id(session: Session, run_id):
     )
     if response.status_code != 202:
         exit()
+
+
+@log_function
+def create_tfvars_file(vars_file_path):
+    file_path = shutil.copy(
+        vars_file_path, os.path.join('Terraform', 'vars.tfvars'))
+    return file_path
 
 
 @log_function
@@ -250,6 +289,28 @@ def wait_for_plan_status(session: Session, run_id, statuses):
                 return
 
 
+def get_workspace_outputs(session: Session, workspace_id):
+    response = session.get(
+        f"https://app.terraform.io/api/v2/workspaces/{workspace_id}/current-state-version")
+    if response.status_code != 200:
+        exit()
+    else:
+        response_data = response.json()
+        state_id = response_data['data']['id']
+        response = session.get(
+            f"https://app.terraform.io/api/v2/state-versions/{state_id}/outputs")
+        if response.status_code != 200:
+            exit()
+        else:
+            response_data = response.json()
+            outputs_dict = {}
+            for output in response_data['data']:
+                output_key = output['data']['attributes']['name']
+                output_value = output['data']['attributes']['value']
+                outputs_dict[output_key] = output_value
+        return outputs_dict
+
+
 @log_function
 # TODO Change from vpc_worspace to global value
 def run_plan_to_completion(session, organization_name, workspace_name):
@@ -268,17 +329,22 @@ def run_plan_to_completion(session, organization_name, workspace_name):
     apply_run_by_id(session, vpc_plan_id)
     wait_for_plan_status(session, vpc_plan_id, [
                          "applied", "planned_and_finished"])
+    # outputs = get_workspace_outputs(session, vpc_workspace["id"])
 
 
 ############################################################################################
 
 
 @log_function
-def run_terraform(terraform_var_file_path, terraform_vars):
+def run_terraform(terraform_var_file_path, terraform_txt_vars):
     deploy_terraform(terraform_var_file_path)
 
     time.sleep(5)
-    session = create_tfe_api_session(terraform_vars["tfe_token"])
+    session = create_tfe_api_session(terraform_txt_vars["tfe_token"])
+    terraform_cloud_vars = get_organization_variables(session)
+    terraform_vars = {}
+    terraform_vars.update(terraform_txt_vars)
+    terraform_vars.update(terraform_cloud_vars)
 
     run_plan_to_completion(
         session,
@@ -311,8 +377,8 @@ def run_ansible(terraform_vars):
     bastion_host_public_ip = get_bastion_host_ip(ec2, get_public_ip=True)
     bastion_host_private_ip = get_bastion_host_ip(ec2, get_public_ip=False)
     ansible_host_private_ip = get_ansible_host_private_ip(ec2)
-    consul_servers_amount = get_consul_servers_amount(ec2)
     aws_default_region = terraform_vars['aws_default_region']
+    consul_servers_amount = 3
 
     bastion_ssh_session = ssh_client_connection(
         bastion_host_public_ip, private_key_file_path)
@@ -356,11 +422,15 @@ def run_ansible(terraform_vars):
     print("Done")
 
 
-def run(terraform_var_file_path):
+def run(vars_file_path):
+
+    terraform_var_file_path = create_tfvars_file(vars_file_path)
     terraform_vars = get_terraform_vars_from_file(terraform_var_file_path)
+    generate_ssl_cert()
     run_terraform(terraform_var_file_path, terraform_vars)
     run_ansible(terraform_vars)
 
 
-terraform_var_file_path = sys.argv[1]
-run(terraform_var_file_path)
+# vars_file_path = sys.argv[1]
+vars_file_path = f"C:\\Keys\\vars.txt"
+run(vars_file_path)

@@ -1,0 +1,10 @@
+tfe_organization_name  = "kandula"
+aws_acess_key          = "<AWS_ACCESS_KEY>"
+aws_secret_acess_key   = "<AWS_SECRET_KEY>"
+tfe_token              = "<terraform_cloud_token>"
+github_pat             = "<github_personal_access_token>"
+slack_webhook_url      = "<slack_webhook_url>"
+private_key_path       = "<path/to/key/file.pem>"
+tfe_organization_email = "<email_address>"
+aws_default_region     = "us-east-1"
+elb_account_id         = 127311923021

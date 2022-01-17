@@ -2,7 +2,7 @@ resource "tfe_workspace" "kubernetes" {
   name         = var.kubernetes_workspace_name
   organization = var.tfe_organization_name
   vcs_repo {
-    identifier     = "${var.github_user}/${var.workspace_repo_identifier}"
+    identifier     = "${var.github_username}/${var.github_repository_name}"
     oauth_token_id = var.oauth_token_id
     branch         = var.github_branch
   }
@@ -11,6 +11,14 @@ resource "tfe_workspace" "kubernetes" {
   working_directory   = var.kubernetes_workspace_directory
   auto_apply          = var.auto_apply
   queue_all_runs      = false
+}
+
+resource "tfe_variable" "kubernetes_workspace_name" {
+  key          = "kubernetes_workspace_name"
+  value        = var.kubernetes_workspace_name
+  description  = "Kubernetes Workspace name"
+  workspace_id = tfe_workspace.kubernetes.id
+  category     = "env"
 }
 
 resource "tfe_variable" "aws_region" {

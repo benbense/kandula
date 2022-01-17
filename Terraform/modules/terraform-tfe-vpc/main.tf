@@ -2,7 +2,7 @@ resource "tfe_workspace" "vpc" {
   name         = var.vpc_workspace_name
   organization = var.tfe_organization_name
   vcs_repo {
-    identifier     = "${var.github_user}/${var.workspace_repo_identifier}"
+    identifier     = "${var.github_username}/${var.github_repository_name}"
     oauth_token_id = var.oauth_token_id
     branch         = var.github_branch
   }
@@ -61,4 +61,22 @@ resource "tfe_variable" "aws_default_region" {
   description  = "AWS Default Region"
   workspace_id = tfe_workspace.vpc.id
   category     = "env"
+}
+
+resource "tfe_variable" "cert_body" {
+  key          = "cert_body"
+  value        = var.cert_body
+  description  = "SSL Certificate Body"
+  workspace_id = tfe_workspace.vpc.id
+  category     = "terraform"
+  sensitive    = true
+}
+
+resource "tfe_variable" "cert_private_key" {
+  key          = "cert_private_key"
+  value        = var.cert_private_key
+  description  = "SSL Certificate PK"
+  workspace_id = tfe_workspace.vpc.id
+  category     = "terraform"
+  sensitive    = true
 }

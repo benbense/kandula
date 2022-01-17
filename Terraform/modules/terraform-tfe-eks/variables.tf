@@ -2,7 +2,7 @@ variable "tfe_organization_name" {
   description = "Terrafrom Cloud Organization Name"
   type        = string
 }
-variable "github_user" {
+variable "github_username" {
   description = "Github Username"
   type        = string
 }
@@ -27,7 +27,7 @@ variable "aws_default_region" {
   type        = string
 }
 variable "kubernetes_workspace_name" {
-  description = "servers Workspace name"
+  description = "Kubernetes Workspace name"
   type        = string
 }
 variable "vpc_workspace_name" {
@@ -39,7 +39,7 @@ variable "servers_workspace_name" {
   description = "Servers Workspace Name"
   type        = string
 }
-variable "workspace_repo_identifier" {
+variable "github_repository_name" {
   description = "Github repo identifier for Workspace creation"
   type        = string
 }
