@@ -12,9 +12,7 @@
     image: jenkins/jenkins
     state: started
     restart_policy: always
-    ports:
-      - "8080:8080"
-      - "50000:50000"
+    network_mode: host
     env:
       JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
     volumes:
