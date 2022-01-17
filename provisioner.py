@@ -31,10 +31,10 @@ def log_function(func):
 
     return log
 
-
+@log_function
 def generate_ssl_cert():
-    KEY_FILE = "Terraform/private.pem"
-    CERT_FILE = "Terraform/selfsigned.pem"
+    KEY_FILE = "Terraform/SSL/private.pem"
+    CERT_FILE = "Terraform/SSL/selfsigned.pem"
     k = crypto.PKey()
     k.generate_key(crypto.TYPE_RSA, 4096)
     cert = crypto.X509()
