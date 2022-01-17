@@ -62,3 +62,13 @@ variable "vpc_workspace_directory" {
 variable "auto_apply" {
   description = "Whether to automatically apply changes when a Terraform plan is successful"
 }
+
+variable "cert_body" {
+  type = string
+  description = "SSL Certificate Body"
+}
+
+variable "cert_private_key" {
+  type = string
+  description = "SSL Certificate PK"
+}
