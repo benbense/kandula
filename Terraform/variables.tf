@@ -155,3 +155,13 @@ variable "elb_account_id" {
   description = "ELB Account ID - pick one according to region https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html#access-logging-bucket-permissions"
   type        = string
 }
+
+variable "cert_body" {
+  type = string
+  description = "SSL Certificate Body"
+}
+
+variable "cert_private_key" {
+  type = string
+  description = "SSL Certificate PK"
+}

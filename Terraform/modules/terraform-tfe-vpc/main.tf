@@ -62,3 +62,21 @@ resource "tfe_variable" "aws_default_region" {
   workspace_id = tfe_workspace.vpc.id
   category     = "env"
 }
+
+resource "tfe_variable" "cert_body" {
+  key          = "cert_body"
+  value        = var.cert_body
+  description  = "SSL Certificate Body"
+  workspace_id = tfe_workspace.vpc.id
+  category     = "terraform"
+  sensitive    = true
+}
+
+resource "tfe_variable" "cert_private_key" {
+  key          = "cert_private_key"
+  value        = var.cert_private_key
+  description  = "SSL Certificate PK"
+  workspace_id = tfe_workspace.vpc.id
+  category     = "terraform"
+  sensitive    = true
+}

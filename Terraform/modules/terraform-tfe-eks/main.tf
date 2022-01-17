@@ -11,8 +11,6 @@ resource "tfe_workspace" "kubernetes" {
   working_directory   = var.kubernetes_workspace_directory
   auto_apply          = var.auto_apply
   queue_all_runs      = false
-<<<<<<< HEAD
-=======
 }
 
 resource "tfe_variable" "kubernetes_workspace_name" {
@@ -21,7 +19,6 @@ resource "tfe_variable" "kubernetes_workspace_name" {
   description  = "Kubernetes Workspace name"
   workspace_id = tfe_workspace.kubernetes.id
   category     = "env"
->>>>>>> review-fix
 }
 
 resource "tfe_variable" "aws_region" {
