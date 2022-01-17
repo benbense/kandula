@@ -30,5 +30,5 @@ output "iam_role_arn" {
 }
 output "kandula_ssl_cert" {
   description = "ARN of SSL Certificate"
-  value       = aws_iam_server_certificate.kandula_ssl_cert.arn
+  value       = module.vpc.kandula_ssl_cert.kandula_ssl_cert
 }
