@@ -81,6 +81,6 @@ data "template_file" "cert_body" {
   template = "${file("SSL/selfsigned.pem")}"
 }
 
-data "template_file" "cert_body" {
+data "template_file" "cert_private_key" {
   template = "${file("SSL/private.pem")}"
 }
