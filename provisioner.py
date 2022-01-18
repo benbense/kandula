@@ -1,3 +1,4 @@
+from cmath import log
 import boto3
 import sys
 import os
@@ -30,6 +31,7 @@ def log_function(func):
         return result
 
     return log
+
 
 @log_function
 def generate_ssl_cert():
@@ -289,47 +291,46 @@ def wait_for_plan_status(session: Session, run_id, statuses):
                 return
 
 
-def get_workspace_outputs(session: Session, workspace_id):
-    response = session.get(
-        f"https://app.terraform.io/api/v2/workspaces/{workspace_id}/current-state-version")
-    if response.status_code != 200:
-        exit()
-    else:
-        response_data = response.json()
-        state_id = response_data['data']['id']
+@log_function
+def get_workspace_outputs(session: Session, workspace_list):
+    all_outputs = {}
+    for workspace in workspace_list:
+        workspace_outputs_dict = {}
         response = session.get(
-            f"https://app.terraform.io/api/v2/state-versions/{state_id}/outputs")
+            f"https://app.terraform.io/api/v2/workspaces/{workspace['id']}")
         if response.status_code != 200:
             exit()
         else:
             response_data = response.json()
-            outputs_dict = {}
-            for output in response_data['data']:
-                output_key = output['data']['attributes']['name']
-                output_value = output['data']['attributes']['value']
-                outputs_dict[output_key] = output_value
-        return outputs_dict
+            output_ids = []
+            for output in response_data['data']['relationships']['outputs']['data']:
+                output_ids.append(output['id'])
+            for output_id in output_ids:
+                response = session.get(
+                    f"https://app.terraform.io/api/v2/state-version-outputs/{output_id}")
+                if response.status_code != 200:
+                    exit()
+                else:
+                    response_data = response.json()
+                    dict_key = response_data['data']['attributes']['name']
+                    dict_value = response_data['data']['attributes']['value']
+                    workspace_outputs_dict[dict_key] = dict_value
+    all_outputs[workspace['name']] = workspace_outputs_dict
+    return all_outputs
 
 
 @log_function
 # TODO Change from vpc_worspace to global value
-def run_plan_to_completion(session, organization_name, workspace_name):
-    vpc_workspace = get_tfe_workspace_by_names(
-        session,
-        organization_name,
-        workspace_name,
-    )
+def run_plan_to_completion(session, workspaces):
+    for workspace in workspaces:
+        current_plan = plan_by_workspace(session, workspace["id"])
+        current_plan_id = current_plan["data"]["id"]
 
-    vpc_plan = plan_by_workspace(session, vpc_workspace["id"])
-
-    vpc_plan_id = vpc_plan["data"]["id"]
-
-    wait_for_plan_status(session, vpc_plan_id, [
-                         "planned", "planned_and_finished"])
-    apply_run_by_id(session, vpc_plan_id)
-    wait_for_plan_status(session, vpc_plan_id, [
-                         "applied", "planned_and_finished"])
-    # outputs = get_workspace_outputs(session, vpc_workspace["id"])
+        wait_for_plan_status(session, current_plan_id, [
+            "planned", "planned_and_finished"])
+        apply_run_by_id(session, current_plan_id)
+        wait_for_plan_status(session, current_plan_id, [
+            "applied", "planned_and_finished"])
 
 
 ############################################################################################
@@ -346,23 +347,19 @@ def run_terraform(terraform_var_file_path, terraform_txt_vars):
     terraform_vars.update(terraform_txt_vars)
     terraform_vars.update(terraform_cloud_vars)
 
-    run_plan_to_completion(
-        session,
-        terraform_vars["tfe_organization_name"],
-        terraform_vars["vpc_workspace_name"],
-    )
+    vpc_workspace = get_tfe_workspace_by_names(
+        session, terraform_vars["tfe_organization_name"], terraform_vars["vpc_workspace_name"])
+    servers_workspace = get_tfe_workspace_by_names(
+        session, terraform_vars["tfe_organization_name"], terraform_vars["servers_workspace_name"])
+    kubernetes_workspace = get_tfe_workspace_by_names(
+        session, terraform_vars["tfe_organization_name"], terraform_vars["kubernetes_workspace_name"])
 
     run_plan_to_completion(
-        session,
-        terraform_vars["tfe_organization_name"],
-        terraform_vars["servers_workspace_name"],
+        session, [vpc_workspace, ]
     )
-
-    run_plan_to_completion(
-        session,
-        terraform_vars["tfe_organization_name"],
-        terraform_vars["kubernetes_workspace_name"],
-    )
+# servers_workspace, kubernetes_workspace
+    workspaces_outputs = get_workspace_outputs(session, [vpc_workspace])
+    print(json.dumps(workspaces_outputs, sort_keys=False, indent=4))
 
 
 @log_function
