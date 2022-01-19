@@ -37,21 +37,25 @@ def log_function(func):
 def generate_ssl_cert():
     KEY_FILE = "Terraform/SSL/private.pem"
     CERT_FILE = "Terraform/SSL/selfsigned.pem"
-    k = crypto.PKey()
-    k.generate_key(crypto.TYPE_RSA, 4096)
-    cert = crypto.X509()
-    cert.set_serial_number(1000)
-    cert.gmtime_adj_notBefore(0)
-    cert.gmtime_adj_notAfter(10*365*24*60*60)
-    cert.get_subject().CN = "Kandula"
-    cert.set_issuer(cert.get_subject())
-    cert.set_pubkey(k)
-    cert.sign(k, 'sha512')
-    with open(CERT_FILE, "w") as f:
-        f.write(crypto.dump_certificate(
-            crypto.FILETYPE_PEM, cert).decode("utf-8"))
-    with open(KEY_FILE, "w") as f:
-        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
+    if os.path.exists(KEY_FILE) or os.path.exists(CERT_FILE):
+        pass
+    else:
+        k = crypto.PKey()
+        k.generate_key(crypto.TYPE_RSA, 4096)
+        cert = crypto.X509()
+        cert.set_serial_number(1000)
+        cert.gmtime_adj_notBefore(0)
+        cert.gmtime_adj_notAfter(10*365*24*60*60)
+        cert.get_subject().CN = "Kandula"
+        cert.set_issuer(cert.get_subject())
+        cert.set_pubkey(k)
+        cert.sign(k, 'sha512')
+        with open(CERT_FILE, "w") as f:
+            f.write(crypto.dump_certificate(
+                crypto.FILETYPE_PEM, cert).decode("utf-8"))
+        with open(KEY_FILE, "w") as f:
+            f.write(crypto.dump_privatekey(
+                crypto.FILETYPE_PEM, k).decode("utf-8"))
 
 
 def progress(filename, size, sent):
@@ -355,11 +359,10 @@ def run_terraform(terraform_var_file_path, terraform_txt_vars):
         session, terraform_vars["tfe_organization_name"], terraform_vars["kubernetes_workspace_name"])
 
     run_plan_to_completion(
-        session, [vpc_workspace, ]
+        session, [vpc_workspace, servers_workspace, kubernetes_workspace]
     )
-# servers_workspace, kubernetes_workspace
-    workspaces_outputs = get_workspace_outputs(session, [vpc_workspace])
-    print(json.dumps(workspaces_outputs, sort_keys=False, indent=4))
+
+    return get_workspace_outputs(session, [vpc_workspace, servers_workspace, kubernetes_workspace])
 
 
 @log_function
@@ -424,8 +427,9 @@ def run(vars_file_path):
     terraform_var_file_path = create_tfvars_file(vars_file_path)
     terraform_vars = get_terraform_vars_from_file(terraform_var_file_path)
     generate_ssl_cert()
-    run_terraform(terraform_var_file_path, terraform_vars)
+    workspaces_outputs = run_terraform(terraform_var_file_path, terraform_vars)
     run_ansible(terraform_vars)
+    print(json.dumps(workspaces_outputs, sort_keys=False, indent=4))
 
 
 # vars_file_path = sys.argv[1]
