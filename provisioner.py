@@ -319,7 +319,7 @@ def get_workspace_outputs(session: Session, workspace_list):
                     dict_key = response_data['data']['attributes']['name']
                     dict_value = response_data['data']['attributes']['value']
                     workspace_outputs_dict[dict_key] = dict_value
-    all_outputs[workspace['name']] = workspace_outputs_dict
+        all_outputs[workspace['name']] = workspace_outputs_dict
     return all_outputs
 
 
