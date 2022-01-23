@@ -13,3 +13,6 @@
   apt:
     name: trivy
     update_cache: yes
+
+- name: Update Trivy Database
+  shell: trivy image --download-db-only
