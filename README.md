@@ -66,10 +66,13 @@ After all requirements mentioned above have been completed make sure your `vars.
 - Required Secrets:
 <center>
 
-| ID                 | Description                       | Values              |
+| ID                 | Description                       | Value Type          |
 | ------------------ | --------------------------------- | ------------------- |
 | dockerhub-benbense | DockerHub User                    | Username + Password |
 | github-benbense    | Github User                       | SSH Username + Key  |
+| aws-access-key     | AWS Access Key                    | Secret Text         |
+| aws-secret-key     | AWS Secret Access Key             | Secret Text         |
+| aws-default-region | AWS Default Region                | Secret Text         |
 | aws-ubuntu         | SSH credentials for Jenkins Nodes | SSH Username + Key  |
 
 </center>
@@ -79,6 +82,7 @@ After all requirements mentioned above have been completed make sure your `vars.
   - Remote Root Directory = /home/ubuntu/jenkins
   - Label = docker
   - Launch Method = SSH (Use `aws-ubuntu` credentials that you have created)
+  - Host = Use Jenkins Nodes IP's or Consul DNS Name (e.g. `Jenkins-Node-0.node.kandula.consul`)
   - Host Key Verification Strategy =  None
 
 - Create Pipeline
