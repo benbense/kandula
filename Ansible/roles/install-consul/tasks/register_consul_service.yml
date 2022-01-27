@@ -17,6 +17,23 @@
     src: bastion_server_service.json
     dest: /etc/consul.d/bastion_server_service.json
 
+- name: Register Grafana service
+  when: service == "grafana" and instance_type == "server"
+  copy:
+    src: grafana_server_service.json
+    dest: /etc/consul.d/grafana_server_service.json
+
+- name: Register Prometheus service
+  when: service == "prometheus" and instance_type == "server"
+  copy:
+    src: prometheus_server_service.json
+    dest: /etc/consul.d/prometheus_server_service.json
+
+- name: Register Node Exporter service
+  copy:
+    src: node_exporter_service.json
+    dest: /etc/consul.d/node_exporter_service.json
+
 - name: Reload Consul service
   systemd:
     name: consul.service
