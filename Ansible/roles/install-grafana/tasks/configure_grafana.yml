@@ -1,0 +1,20 @@
+---
+- name: Create Prometheus Datasource
+  community.grafana.grafana_datasource:
+    url: "http://localhost:3000"
+    name: prometheus
+    ds_type: prometheus
+    ds_url: "http://prometheus.service.kandula.consul:9090"
+    access: proxy
+    tls_skip_verify: true
+    is_default: yes
+
+- name: Copy Dashboard to machine
+  copy:
+    src: node-exporter-full.json
+    dest: /home/ubuntu/node-exporter-full.json
+# - name: Import Grafana Node Exporter Dashboard
+#   community.grafana.grafana_dashboard:
+#     url: "http://localhost:3000"
+#     state: present
+#     path: /home/ubuntu/node-exporter-full.json
