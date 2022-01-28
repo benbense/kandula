@@ -1,0 +1,26 @@
+---
+- include_tasks: docker.yml
+  name: Install Docker
+
+- name: Create Prometheus config folder
+  file:
+    path: /home/ubuntu/prometheus/config
+    state: directory
+    group: "{{ docker_group }}"
+    mode: "0777"
+
+- name: Copy Prometheus Configuration
+  copy:
+    src: prometheus.yml
+    dest: /home/ubuntu/prometheus/config/prometheus.yml
+
+- name: Start Prometheus Container
+  community.docker.docker_container:
+    name: prometheus
+    image: prom/prometheus
+    state: started
+    restart_policy: always
+    network_mode: host
+    volumes:
+      - /home/ubuntu/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /var/run/docker.sock:/var/run/docker.sock

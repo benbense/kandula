@@ -1,0 +1,4 @@
+---
+# defaults file for install-prometheus
+docker_users: ["ubuntu"]
+docker_group: docker
