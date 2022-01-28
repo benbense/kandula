@@ -404,8 +404,6 @@ def run_ansible(terraform_vars, workspaces_outputs):
     install_ansible_modules = [
         "ansible-galaxy collection install community.general",
         "ansible-galaxy collection install amazon.aws",
-        "ansible-galaxy collection install community.docker",
-        "ansible-galaxy collection install community.grafana",
         "ansible-galaxy install cloudalchemy.node_exporter",
 
     ]
