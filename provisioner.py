@@ -359,24 +359,21 @@ def run_terraform(terraform_var_file_path, terraform_txt_vars):
         session, terraform_vars["tfe_organization_name"], terraform_vars["kubernetes_workspace_name"])
 
     run_plan_to_completion(
-        session, [vpc_workspace, servers_workspace, kubernetes_workspace]
+        session, [vpc_workspace, servers_workspace]
     )
 
-    return get_workspace_outputs(session, [vpc_workspace, servers_workspace, kubernetes_workspace])
+    return get_workspace_outputs(session, [vpc_workspace, servers_workspace])
 
 
 @log_function
-def run_ansible(terraform_vars):
+def run_ansible(terraform_vars, workspaces_outputs):
     private_key_file_path = terraform_vars["private_key_path"]
     ansible_files = f"Ansible"
 
-    ec2 = boto3.resource("ec2")
-    eks = boto3.client("eks")
-
-    eks_cluster_name = get_eks_cluster_name(eks)
-    bastion_host_public_ip = get_bastion_host_ip(ec2, get_public_ip=True)
-    bastion_host_private_ip = get_bastion_host_ip(ec2, get_public_ip=False)
-    ansible_host_private_ip = get_ansible_host_private_ip(ec2)
+    eks_cluster_name = workspaces_outputs['VPC-Workspace']['cluster_name']
+    bastion_host_public_ip = workspaces_outputs['Servers-Workspace']['bastion_server_public_ip'][0]
+    bastion_host_private_ip = workspaces_outputs['Servers-Workspace']['bastion_server_private_ip'][0]
+    ansible_host_private_ip = workspaces_outputs['Servers-Workspace']['ansible_server_private_ip'][0]
     aws_default_region = terraform_vars['aws_default_region']
     consul_servers_amount = 3
 
@@ -408,6 +405,9 @@ def run_ansible(terraform_vars):
         "ansible-galaxy collection install community.general",
         "ansible-galaxy collection install amazon.aws",
         "ansible-galaxy collection install community.docker",
+        "ansible-galaxy collection install community.grafana",
+        "ansible-galaxy install cloudalchemy.node_exporter",
+
     ]
 
     run_ansible_playbook_commands = [
@@ -428,7 +428,7 @@ def run(vars_file_path):
     terraform_vars = get_terraform_vars_from_file(terraform_var_file_path)
     generate_ssl_cert()
     workspaces_outputs = run_terraform(terraform_var_file_path, terraform_vars)
-    run_ansible(terraform_vars)
+    run_ansible(terraform_vars, workspaces_outputs)
     print(json.dumps(workspaces_outputs, sort_keys=False, indent=4))
 
 
