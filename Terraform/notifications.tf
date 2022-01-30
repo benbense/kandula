@@ -45,7 +45,7 @@ resource "tfe_notification_configuration" "k8s_slack_notifications" {
 }
 
 resource "tfe_notification_configuration" "rds_slack_notifications" {
-  workspace_id     = module.rds.kubernetes_workspace_id
+  workspace_id     = module.rds.rds_workspace_id
   name             = var.rds_workspace_name
   enabled          = true
   destination_type = "slack"
