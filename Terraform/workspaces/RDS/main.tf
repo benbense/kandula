@@ -3,7 +3,7 @@ resource "aws_db_instance" "postgres" {
   engine                 = "postgres"
   engine_version         = "12.5"
   instance_class         = "db.t2.micro"
-  identifier             = "kandulaDB"
+  identifier             = "kanduladb"
   username               = "postgres"
   password               = random_password.password.result
   publicly_accessible    = true
