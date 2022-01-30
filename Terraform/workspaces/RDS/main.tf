@@ -13,13 +13,14 @@ resource "aws_db_instance" "postgres" {
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
-  name       = "db_subnet_group"
-  subnet_ids = flatten(data.terraform_remote_state.vpc.outputs.public_subnets_ids)
+  name        = "db_subnet_group"
+  description = "${var.var.db_identifier_name} Subnet Group"
+  subnet_ids  = flatten(data.terraform_remote_state.vpc.outputs.public_subnets_ids)
 }
 
 resource "aws_security_group" "rds_postgres" {
   name        = "${var.db_identifier_name}_sg"
-  description = "Security group for Postgres RDS"
+  description = "Security group for ${var.db_identifier_name} Postgres RDS"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
   egress {
     from_port   = 0
