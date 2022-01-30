@@ -155,3 +155,15 @@ variable "elb_account_id" {
   description = "ELB Account ID - pick one according to region https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html#access-logging-bucket-permissions"
   type        = string
 }
+
+variable "rds_workspace_name" {
+  description = "RDS Workspace Name"
+  type        = string
+  default     = "RDS-Workspace"
+}
+
+variable "rds_workspace_directory" {
+  description = "Directory for RDS module"
+  type        = string
+  default     = "Terraform/workspaces/RDS"
+}
