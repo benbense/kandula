@@ -14,7 +14,7 @@ resource "aws_db_instance" "postgres" {
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name        = "db_subnet_group"
-  description = "${var.var.db_identifier_name} Subnet Group"
+  description = "${var.db_identifier_name} Subnet Group"
   subnet_ids  = flatten(data.terraform_remote_state.vpc.outputs.public_subnets_ids)
 }
 
