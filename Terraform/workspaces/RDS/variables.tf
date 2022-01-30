@@ -19,3 +19,8 @@ variable "tfe_organization_name" {
   description = "TFE Organization Name"
 }
 
+variable "db_identifier_name" {
+  type        = string
+  description = "DB Identifier name"
+  value       = "kanduladb"
+}

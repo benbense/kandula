@@ -3,7 +3,7 @@ resource "aws_db_instance" "postgres" {
   engine                 = "postgres"
   engine_version         = "12.5"
   instance_class         = "db.t2.micro"
-  identifier             = "kanduladb"
+  identifier             = var.db_identifier_name
   username               = "postgres"
   password               = random_password.password.result
   publicly_accessible    = true
@@ -13,13 +13,12 @@ resource "aws_db_instance" "postgres" {
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
-  for_each   = data.terraform_remote_state.vpc.outputs.public_subnets_ids
   name       = "db_subnet_group"
-  subnet_ids = [each.value.id]
+  subnet_ids = flatten(data.terraform_remote_state.vpc.outputs.public_subnets_ids)
 }
 
 resource "aws_security_group" "rds_postgres" {
-  name        = "rds_sg"
+  name        = "${var.db_identifier_name}_sg"
   description = "Security group for Postgres RDS"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
   egress {
