@@ -22,5 +22,5 @@ variable "tfe_organization_name" {
 variable "db_identifier_name" {
   type        = string
   description = "DB Identifier name"
-  value       = "kanduladb"
+  default       = "kanduladb"
 }
