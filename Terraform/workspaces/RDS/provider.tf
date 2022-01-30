@@ -15,3 +15,23 @@ terraform {
     }
   }
 }
+
+data "terraform_remote_state" "vpc" {
+  backend = "remote"
+  config = {
+    organization = "${var.tfe_organization_name}"
+    workspaces = {
+      name = "${var.vpc_workspace_name}"
+    }
+  }
+}
+
+data "terraform_remote_state" "servers" {
+  backend = "remote"
+  config = {
+    organization = "${var.tfe_organization_name}"
+    workspaces = {
+      name = "${var.servers_workspace_name}"
+    }
+  }
+}
