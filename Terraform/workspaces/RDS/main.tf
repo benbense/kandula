@@ -19,7 +19,7 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 resource "aws_security_group" "rds_postgres" {
   name        = "rds_sg"
   description = "Security group for Postgres RDS"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
   egress {
     from_port   = 0
     to_port     = 0
