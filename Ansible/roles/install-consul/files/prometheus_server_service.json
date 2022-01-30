@@ -1,0 +1,20 @@
+{
+    "services": [
+        {
+            "name": "prometheus",
+            "tags": [
+                "prometheus",
+                "monitoring"
+            ],
+            "port": 9090,
+            "checks": [
+                {
+                    "name": "tcp-9090",
+                    "tcp": "localhost:9090",
+                    "interval": "5s",
+                    "timeout": "10s"
+                }
+            ]
+        }
+    ]
+}

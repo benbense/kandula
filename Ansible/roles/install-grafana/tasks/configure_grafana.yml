@@ -1,0 +1,25 @@
+---
+- name: Create Datasource folder
+  file:
+    path: /etc/grafana/provisioning/datasources
+    state: directory
+
+- name: Create Dashboard folder
+  file:
+    path: /etc/grafana/provisioning/dashboards
+    state: directory
+
+- name: Copy Datasource config to machine
+  copy:
+    src: datasource.yml
+    dest: /etc/grafana/provisioning/datasources/datasource.yml
+
+- name: Copy Dashboard config to machine
+  copy:
+    src: dashboard.yml
+    dest: /etc/grafana/provisioning/dashboards/dashboard.yml
+
+- name: Copy Dashboard to machine
+  copy:
+    src: node-exporter.json
+    dest: /etc/grafana/provisioning/dashboards/node-exporter.json

@@ -31,7 +31,12 @@
         service: "{{ instance_info.instances | map(attribute='tags.service') | list | join('\n') }}"
 
   roles:
+    - role: install-node-exporter
     - role: install-consul
       when: is_consul_monitored == true
     - role: install-jenkins
       when: service == "jenkins"
+    - role: install-prometheus
+      when: service == "prometheus"
+    - role: install-grafana
+      when: service == "grafana"

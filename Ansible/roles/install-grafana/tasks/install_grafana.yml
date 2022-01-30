@@ -1,0 +1,34 @@
+---
+- name: Install Grafana Prerequisites
+  apt:
+    name:
+      - apt-transport-https
+      - software-properties-common
+    update_cache: yes
+    state: present
+
+- name: Add GPG key
+  apt_key:
+    url: https://packages.grafana.com/gpg.key
+
+- name: Setup Grafana Stable repo
+  apt_repository:
+    repo: "deb https://packages.grafana.com/oss/deb stable main"
+    update_cache: yes
+
+- name: Install Grafana
+  apt:
+    name:
+      - grafana
+    update_cache: yes
+    state: present
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Start Grafana-server service
+  ansible.builtin.systemd:
+    state: started
+    name: grafana-server
+    enabled: yes
