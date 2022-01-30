@@ -13,8 +13,9 @@ resource "aws_db_instance" "postgres" {
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
+  for_each   = data.terraform_remote_state.vpc.outputs.public_subnets_ids
   name       = "db_subnet_group"
-  subnet_ids = [data.terraform_remote_state.vpc.outputs.public_subnets_ids[0], data.terraform_remote_state.vpc.outputs.public_subnets_ids[1]]
+  subnet_ids = [each.value.id]
 }
 
 resource "aws_security_group" "rds_postgres" {
