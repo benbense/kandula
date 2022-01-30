@@ -9,11 +9,12 @@ resource "aws_db_instance" "postgres" {
   publicly_accessible    = true
   vpc_security_group_ids = [aws_security_group.rds_postgres.id]
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
+
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "db_subnet_group"
-  subnet_ids = [data.terraform_remote_state.vpc.outputs.public_subnets_ids[0]]
+  subnet_ids = element(var.private_public_ids, 2)
 }
 
 resource "aws_security_group" "rds_postgres" {
