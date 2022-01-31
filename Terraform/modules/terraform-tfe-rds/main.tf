@@ -63,14 +63,6 @@ resource "tfe_variable" "aws_default_region" {
   category     = "env"
 }
 
-resource "tfe_variable" "rds_ingress_ports" {
-  key          = "rds_ingress_ports"
-  value        = var.rds_ingress_ports
-  description  = "Postgres RDS ingress ports"
-  workspace_id = tfe_workspace.rds.id
-  category     = "terraform"
-}
-
 resource "tfe_variable" "db_identifier_name" {
   key          = "db_identifier_name"
   value        = var.db_identifier_name

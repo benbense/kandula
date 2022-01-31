@@ -77,7 +77,6 @@ module "rds" {
   github_repository_name  = var.github_repository_name
   rds_workspace_directory = var.rds_workspace_directory
   auto_apply              = var.auto_apply
-  rds_ingress_ports       = var.rds_ingress_ports
   db_identifier_name      = var.db_identifier_name
   engine_version          = var.engine_version
   instance_class          = var.instance_class

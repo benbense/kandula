@@ -49,11 +49,6 @@ variable "auto_apply" {
   description = "Whether to automatically apply changes when a Terraform plan is successful"
 }
 
-variable "rds_ingress_ports" {
-  type        = list(string)
-  description = "Postgres RDS ingress ports"
-}
-
 variable "db_identifier_name" {
   type        = string
   description = "DB Identifier name"

@@ -168,12 +168,6 @@ variable "rds_workspace_directory" {
   default     = "Terraform/workspaces/RDS"
 }
 
-variable "rds_ingress_ports" {
-  type        = list(string)
-  description = "Postgres RDS ingress ports"
-  default     = [5432]
-}
-
 variable "db_identifier_name" {
   type        = string
   description = "DB Identifier name"
