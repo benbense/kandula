@@ -130,10 +130,12 @@ Notes:
 | servers_workspace_name         | Servers Workspace Name                                                     | str  |
 | vpc_workspace_name             | VPC Workspace Name                                                         | str  |
 | kubernetes_workspace_name      | Kubernetes Workspace Name                                                  | str  |
+| rds_workspace_name             | RDS Workspace Name                                                         | str  |
 | github_repository_name         | Github repo identifier for Workspace creation                              | str  |
 | servers_workspace_directory    | Working directory for servers module                                       | str  |
 | vpc_workspace_directory        | Working directory for vpc module                                           | str  |
 | kubernetes_workspace_directory | Working directory for Kubernetes module                                    | str  |
+| RDS_workspace_directory        | Working directory for RDS module                                           | str  |
 | k8s_service_account_namespace  | Kubernetes Service Account Namespace                                       | str  |
 | k8s_service_account_name       | Kubernetes Service Account Name                                            | str  |
 | auto_apply                     | Whether to automatically apply changes when a Terraform plan is successful | bool |

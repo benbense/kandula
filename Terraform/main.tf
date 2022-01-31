@@ -14,8 +14,8 @@ module "vpc" {
   github_repository_name  = var.github_repository_name
   vpc_workspace_directory = var.vpc_workspace_directory
   auto_apply              = var.auto_apply
-  cert_body               = "${data.template_file.cert_body.rendered}"
-  cert_private_key        = "${data.template_file.cert_private_key.rendered}"
+  cert_body               = data.template_file.cert_body.rendered
+  cert_private_key        = data.template_file.cert_private_key.rendered
 }
 
 module "servers" {
@@ -63,6 +63,26 @@ module "eks" {
   servers_workspace_name         = var.servers_workspace_name
 }
 
+module "rds" {
+  source                  = ".\\modules\\terraform-tfe-rds"
+  tfe_organization_name   = var.tfe_organization_name
+  github_username         = var.github_username
+  oauth_token_id          = tfe_oauth_client.github_oauth.oauth_token_id
+  github_branch           = var.github_branch
+  aws_acess_key           = var.aws_acess_key
+  aws_default_region      = var.aws_default_region
+  aws_secret_acess_key    = var.aws_secret_acess_key
+  rds_workspace_name      = var.rds_workspace_name
+  vpc_workspace_name      = var.vpc_workspace_name
+  github_repository_name  = var.github_repository_name
+  rds_workspace_directory = var.rds_workspace_directory
+  auto_apply              = var.auto_apply
+  db_identifier_name      = var.db_identifier_name
+  engine_version          = var.engine_version
+  instance_class          = var.instance_class
+  db_username             = var.db_username
+}
+
 resource "tls_private_key" "server_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -78,9 +98,9 @@ resource "local_file" "server_key" {
 }
 
 data "template_file" "cert_body" {
-  template = "${file("SSL/selfsigned.pem")}"
+  template = file("SSL/selfsigned.pem")
 }
 
 data "template_file" "cert_private_key" {
-  template = "${file("SSL/private.pem")}"
+  template = file("SSL/private.pem")
 }
