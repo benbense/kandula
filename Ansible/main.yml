@@ -40,3 +40,5 @@
       when: service == "prometheus"
     - role: install-grafana
       when: service == "grafana"
+    - role: install-psql
+      when: service == "bastion"
