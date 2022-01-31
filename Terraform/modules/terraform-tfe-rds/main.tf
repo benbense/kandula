@@ -21,14 +21,6 @@ resource "tfe_variable" "rds_workspace_name" {
   category     = "env"
 }
 
-resource "tfe_variable" "aws_region" {
-  key          = "aws_region"
-  value        = var.aws_default_region
-  description  = "AWS Default Region"
-  workspace_id = tfe_workspace.rds.id
-  category     = "terraform"
-}
-
 resource "tfe_variable" "vpc_workspace_name" {
   key          = "vpc_workspace_name"
   value        = var.vpc_workspace_name

@@ -77,7 +77,11 @@ module "rds" {
   github_repository_name  = var.github_repository_name
   rds_workspace_directory = var.rds_workspace_directory
   auto_apply              = var.auto_apply
-  servers_workspace_name  = var.servers_workspace_name
+  rds_ingress_ports       = var.rds_ingress_ports
+  db_identifier_name      = var.db_identifier_name
+  engine_version          = var.engine_version
+  instance_class          = var.instance_class
+  db_username             = var.db_username
 }
 
 resource "tls_private_key" "server_key" {

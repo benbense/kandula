@@ -167,3 +167,31 @@ variable "rds_workspace_directory" {
   type        = string
   default     = "Terraform/workspaces/RDS"
 }
+
+variable "rds_ingress_ports" {
+  type        = list(string)
+  description = "Postgres RDS ingress ports"
+  default     = [5432]
+}
+
+variable "db_identifier_name" {
+  type        = string
+  description = "DB Identifier name"
+  default     = "kanduladb"
+}
+
+variable "engine_version" {
+  type        = string
+  description = "DB Engine Version"
+  default     = "12.5"
+}
+variable "instance_class" {
+  type        = string
+  description = "DB Instance class"
+  default     = "db.t2.micro"
+}
+variable "db_username" {
+  type        = string
+  description = "DB Username"
+  default     = "postgres"
+}
