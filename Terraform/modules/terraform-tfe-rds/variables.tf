@@ -35,10 +35,6 @@ variable "vpc_workspace_name" {
   type        = string
 }
 
-variable "servers_workspace_name" {
-  description = "Servers Workspace Name"
-  type        = string
-}
 variable "github_repository_name" {
   description = "Github repo identifier for Workspace creation"
   type        = string
@@ -51,4 +47,27 @@ variable "rds_workspace_directory" {
 
 variable "auto_apply" {
   description = "Whether to automatically apply changes when a Terraform plan is successful"
+}
+
+variable "rds_ingress_ports" {
+  type        = list(string)
+  description = "Postgres RDS ingress ports"
+}
+
+variable "db_identifier_name" {
+  type        = string
+  description = "DB Identifier name"
+}
+
+variable "engine_version" {
+  type        = string
+  description = "DB Engine Version"
+}
+variable "instance_class" {
+  type        = string
+  description = "DB Instance class"
+}
+variable "db_username" {
+  type        = string
+  description = "DB Username"
 }

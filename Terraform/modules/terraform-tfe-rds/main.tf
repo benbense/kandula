@@ -29,15 +29,6 @@ resource "tfe_variable" "vpc_workspace_name" {
   category     = "terraform"
 }
 
-resource "tfe_variable" "servers_workspace_name" {
-  key          = "servers_workspace_name"
-  value        = var.servers_workspace_name
-  description  = "Servers Workspace Name"
-  workspace_id = tfe_workspace.rds.id
-  category     = "terraform"
-}
-
-
 resource "tfe_variable" "tfe_organization_name" {
   key          = "tfe_organization_name"
   value        = var.tfe_organization_name
@@ -70,4 +61,44 @@ resource "tfe_variable" "aws_default_region" {
   description  = "AWS Default Region"
   workspace_id = tfe_workspace.rds.id
   category     = "env"
+}
+
+resource "tfe_variable" "rds_ingress_ports" {
+  key          = "rds_ingress_ports"
+  value        = var.rds_ingress_ports
+  description  = "Postgres RDS ingress ports"
+  workspace_id = tfe_workspace.rds.id
+  category     = "terraform"
+}
+
+resource "tfe_variable" "db_identifier_name" {
+  key          = "db_identifier_name"
+  value        = var.db_identifier_name
+  description  = "DB Identifier name"
+  workspace_id = tfe_workspace.rds.id
+  category     = "terraform"
+}
+
+resource "tfe_variable" "engine_version" {
+  key          = "engine_version"
+  value        = var.engine_version
+  description  = "DB Engine Version"
+  workspace_id = tfe_workspace.rds.id
+  category     = "terraform"
+}
+
+resource "tfe_variable" "instance_class" {
+  key          = "instance_class"
+  value        = var.instance_class
+  description  = "DB Instance class"
+  workspace_id = tfe_workspace.rds.id
+  category     = "terraform"
+}
+
+resource "tfe_variable" "db_username" {
+  key          = "db_username"
+  value        = var.db_username
+  description  = "DB Username"
+  workspace_id = tfe_workspace.rds.id
+  category     = "terraform"
 }
