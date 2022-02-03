@@ -32,31 +32,39 @@
     path: /var/lib/node_exporter/textfile_collector
     state: directory
 
-- name: Change directory owner
+- name: Change node_exporter bin owner
   ansible.builtin.file:
     path: /usr/local/bin/node_exporter
     owner: node_exporter
     group: node_exporter
 
-- name: Change directory owner
+- name: Change node_exporter directory owner
   ansible.builtin.file:
     path: /var/lib/node_exporter
     owner: node_exporter
     group: node_exporter
 
-- name: Change directory owner
+- name: Change textfile_collector directory owner
   ansible.builtin.file:
     path: /var/lib/node_exporter/textfile_collector
     owner: node_exporter
     group: node_exporter
 
-- name: Copy service file
+- name: Copy node_exporter service file
   copy:
     src: node_exporter.service
     dest: /etc/systemd/system/node_exporter.service
 
 - name: Changing permission of node_exporter
   file: dest=/usr/local/bin/node_exporter mode=a+x
+
+- name: Create Crontab job
+  cron:
+    name: "log active users"
+    minute: "*"
+    hour: "*"
+    day: "*"
+    job: 'echo "logged_in_sessions $(who | wc -l)" > /var/lib/node_exporter/textfile_collector/logged_in_sessions.prom'
 
 - name: Reload systemd
   ansible.builtin.systemd:
