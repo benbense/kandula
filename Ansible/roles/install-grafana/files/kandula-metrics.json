@@ -21,7 +21,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 1,
+    "id": 4,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -294,10 +294,7 @@
                             "tooltip": false,
                             "viz": false
                         },
-                        "lineWidth": 0,
-                        "scaleDistribution": {
-                            "type": "linear"
-                        }
+                        "lineWidth": 0
                     },
                     "decimals": 0,
                     "mappings": [],
@@ -964,7 +961,7 @@
                 "showThresholdLabels": false,
                 "showThresholdMarkers": true
             },
-            "pluginVersion": "8.4.0-beta1",
+            "pluginVersion": "8.3.4",
             "targets": [
                 {
                     "datasource": {
@@ -1043,7 +1040,7 @@
         }
     ],
     "refresh": "5s",
-    "schemaVersion": 35,
+    "schemaVersion": 34,
     "style": "dark",
     "tags": [],
     "templating": {
@@ -1070,6 +1067,6 @@
     "timezone": "",
     "title": "Kandula App Metrics",
     "uid": "vZrl0Va7k",
-    "version": 10,
+    "version": 2,
     "weekStart": ""
 }
