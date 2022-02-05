@@ -19,7 +19,12 @@
     src: dashboard.yml
     dest: /etc/grafana/provisioning/dashboards/dashboard.yml
 
-- name: Copy Dashboard to machine
+- name: Copy node-exporter Dashboard to machine
   copy:
     src: node-exporter.json
     dest: /etc/grafana/provisioning/dashboards/node-exporter.json
+
+- name: Copy kandula-metrics Dashboard to machine
+  copy:
+    src: node-exporter.json
+    dest: /etc/grafana/provisioning/dashboards/kandula-metrics.json

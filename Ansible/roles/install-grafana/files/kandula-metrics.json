@@ -1,0 +1,1075 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": "-- Grafana --",
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "target": {
+                    "limit": 100,
+                    "matchAny": false,
+                    "tags": [],
+                    "type": "dashboard"
+                },
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 1,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+        {
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 2,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "none"
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_home\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/home"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_scheduler\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/scheduler"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_metrics\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/metrics"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_about\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/about"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_health\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/health"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_instances\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/instances"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "/metrics"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "red",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "/health"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "purple",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 8,
+                "x": 0,
+                "y": 0
+            },
+            "id": 10,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "right"
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "rate(opsschool_monitor_views_count{method=\"view_home\"}[1m])",
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "rate(opsschool_monitor_views_count{method=\"view_scheduler\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "rate(opsschool_monitor_views_count{method=\"view_metrics\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "rate(opsschool_monitor_views_count{method=\"view_about\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "D"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "rate(opsschool_monitor_views_count{method=\"view_health\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "E"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "rate(opsschool_monitor_views_count{method=\"view_instances\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "F"
+                }
+            ],
+            "title": "Requests Per Second (1m)",
+            "type": "timeseries"
+        },
+        {
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-BlYlRd"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "axisSoftMin": 0,
+                        "fillOpacity": 80,
+                        "gradientMode": "hue",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineWidth": 0,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        }
+                    },
+                    "decimals": 0,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "sum(increase(opsschool_monitor_views_count{job=\"kandula\"}[1m]))"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Requests"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 14,
+                "w": 8,
+                "x": 8,
+                "y": 0
+            },
+            "id": 14,
+            "options": {
+                "barRadius": 0,
+                "barWidth": 0.8,
+                "groupWidth": 0.7,
+                "legend": {
+                    "calcs": [
+                        "max",
+                        "mean"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom"
+                },
+                "orientation": "auto",
+                "showValue": "never",
+                "stacking": "none",
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                },
+                "xTickLabelRotation": 0,
+                "xTickLabelSpacing": 100
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "sum(increase(opsschool_monitor_views_count{job=\"kandula\"}[1m]))",
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "A"
+                }
+            ],
+            "title": "Total Requests Per Minute",
+            "type": "barchart"
+        },
+        {
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        }
+                    },
+                    "mappings": []
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_home\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/home"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_scheduler\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/scheduler"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_about\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/about"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_health\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/health"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "purple",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_instances\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/instances"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_metrics\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/metrics"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "red",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 14,
+                "w": 8,
+                "x": 16,
+                "y": 0
+            },
+            "id": 15,
+            "options": {
+                "displayLabels": [
+                    "percent"
+                ],
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "right",
+                    "values": []
+                },
+                "pieType": "pie",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "8.4.0-beta1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_home\"}",
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_scheduler\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_metrics\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_about\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "D"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_health\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "F"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_instances\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "E"
+                }
+            ],
+            "title": "Total Page View Chart",
+            "type": "piechart"
+        },
+        {
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "ms"
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_home\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/home"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_scheduler\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/scheduler"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_metrics\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/metrics"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_about\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/about"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_health\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/health"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_instances\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/instances"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "/metrics"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "red",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "/health"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "purple",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 8,
+                "x": 0,
+                "y": 7
+            },
+            "id": 11,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "right"
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "increase(opsschool_monitor_views_sum{method=\"view_home\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "increase(opsschool_monitor_views_sum{method=\"view_scheduler\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "increase(opsschool_monitor_views_sum{method=\"view_metrics\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "increase(opsschool_monitor_views_sum{method=\"view_about\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "G"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "increase(opsschool_monitor_views_sum{method=\"view_health\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "D"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "increase(opsschool_monitor_views_sum{method=\"view_instances\"}[1m])",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "F"
+                }
+            ],
+            "title": "Avg. Response Time (1m)",
+            "type": "timeseries"
+        },
+        {
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_home\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/home"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_scheduler\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/scheduler"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_about\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/about"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_health\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/health"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "purple",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_instances\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/instances"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "opsschool_monitor_views_count{instance=\"10.10.10.129:9100\", job=\"kandula\", method=\"view_metrics\"}"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "/metrics"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "red",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 24,
+                "x": 0,
+                "y": 14
+            },
+            "id": 2,
+            "options": {
+                "orientation": "auto",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true
+            },
+            "pluginVersion": "8.4.0-beta1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_home\"}",
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_scheduler\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_metrics\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_about\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "D"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_health\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "F"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "_wpso4ank"
+                    },
+                    "exemplar": true,
+                    "expr": "opsschool_monitor_views_count{method=\"view_instances\"}",
+                    "hide": false,
+                    "interval": "",
+                    "legendFormat": "",
+                    "refId": "E"
+                }
+            ],
+            "title": "Total Page View Count",
+            "type": "gauge"
+        }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 35,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-15m",
+        "to": "now"
+    },
+    "timepicker": {
+        "refresh_intervals": [
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+        ]
+    },
+    "timezone": "",
+    "title": "Kandula App Metrics",
+    "uid": "vZrl0Va7k",
+    "version": 10,
+    "weekStart": ""
+}
