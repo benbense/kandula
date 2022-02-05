@@ -127,7 +127,7 @@ def ssh_client_connection(host_ip, private_key_file_path):
 
 
 def scp_file_copy(ssh_session, file, remote_path):
-    with SCPClient(ssh_session.get_transport(), progress=progress) as scp:
+    with SCPClient(ssh_session.get_transport(), progress=progress, socket_timeout=60) as scp:
         scp.put(file, remote_path=remote_path, recursive=True)
 
 
@@ -357,18 +357,20 @@ def run_terraform(terraform_var_file_path, terraform_txt_vars):
         session, terraform_vars["tfe_organization_name"], terraform_vars["servers_workspace_name"])
     kubernetes_workspace = get_tfe_workspace_by_names(
         session, terraform_vars["tfe_organization_name"], terraform_vars["kubernetes_workspace_name"])
+    rds_workspace = get_tfe_workspace_by_names(
+        session, terraform_vars["tfe_organization_name"], terraform_vars["rds_workspace_name"])
 
     run_plan_to_completion(
-        session, [vpc_workspace, servers_workspace]
+        session, [vpc_workspace, servers_workspace, kubernetes_workspace]
     )
 
-    return get_workspace_outputs(session, [vpc_workspace, servers_workspace])
+    return get_workspace_outputs(session, [vpc_workspace, servers_workspace, kubernetes_workspace])
 
 
 @log_function
 def run_ansible(terraform_vars, workspaces_outputs):
     private_key_file_path = terraform_vars["private_key_path"]
-    ansible_files = f"Ansible"
+    ansible_files = f"/home/ubuntu/kandula/Ansible"
 
     eks_cluster_name = workspaces_outputs['VPC-Workspace']['cluster_name']
     bastion_host_public_ip = workspaces_outputs['Servers-Workspace']['bastion_server_public_ip'][0]
@@ -386,7 +388,7 @@ def run_ansible(terraform_vars, workspaces_outputs):
     scp_file_copy(
         ansible_ssh_session, private_key_file_path, "/home/ubuntu/.ssh/id_rsa"
     )
-    scp_file_copy(ansible_ssh_session, ansible_files, "~/")
+    # scp_file_copy(ansible_ssh_session, ansible_files, "~/")
 
     ssh_commands = [
         "chmod 600 /home/ubuntu/.ssh/id_rsa",
@@ -399,6 +401,7 @@ def run_ansible(terraform_vars, workspaces_outputs):
         "sudo add-apt-repository --yes --update ppa:ansible/ansible",
         "sudo apt install ansible -y",
         "sudo apt install python-boto3 -y",
+        "git clone -b develop https://github.com/benbense/kandula.git /home/ubuntu/kandula",
     ]
 
     install_ansible_modules = [
