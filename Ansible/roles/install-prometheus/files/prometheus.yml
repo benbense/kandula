@@ -13,12 +13,26 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9090"]
 
-  - job_name: "consul_node_exporter"
+  - job_name: "node_exporter"
     consul_sd_configs:
-      - server: "consul.service.kandula.consul:8500"
+      - server: "localhost:8500"
         services:
           - "node_exporter"
     relabel_configs:
       - source_labels: ["__meta_consul_node"]
-        replacement: "$1.server.kandula.consul"
+        replacement: "$1"
         target_label: instance
+
+  - job_name: "consul_metrics"
+    consul_sd_configs:
+      - server: "localhost:8500"
+        services:
+          - "consul"
+    relabel_configs:
+      - source_labels: ["__address__"]
+        target_label: "__address__"
+        regex: "(.*):(.*)"
+        replacement: "$1:8500"
+    metrics_path: "/v1/agent/metrics"
+    params:
+      format: ["prometheus"]

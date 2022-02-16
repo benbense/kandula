@@ -13,5 +13,9 @@
   "server": true,
   "bootstrap_expect": "servers_count",
   "ui": true,
-  "client_addr": "0.0.0.0"
+  "client_addr": "0.0.0.0",
+  "telemetry": {
+    "prometheus_retention_time": "480h",
+    "disable_hostname": true
+  }
 }
