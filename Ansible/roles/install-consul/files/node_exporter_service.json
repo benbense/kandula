@@ -1,9 +1,9 @@
 {
     "services": [
         {
-            "name": "node_exporter",
+            "name": "node-exporter",
             "tags": [
-                "node_exporter",
+                "node-exporter",
                 "prometheus"
             ],
             "port": 9100,
