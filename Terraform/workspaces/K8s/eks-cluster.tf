@@ -67,3 +67,16 @@ data "aws_eks_cluster" "eks" {
 data "aws_eks_cluster_auth" "eks" {
   name = module.eks.cluster_id
 }
+
+resource "kubernetes_secret" "aws_creds" {
+  metadata {
+    name = "aws-cred"
+  }
+
+  data = {
+    username = var.AWS_ACCESS_KEY_ID
+    password = var.AWS_SECRET_ACCESS_KEY
+  }
+
+  type = "kubernetes.io/basic-auth"
+}
