@@ -17,6 +17,7 @@
   copy:
     src: filebeat_health_check.sh
     dest: /home/ubuntu/filebeat_health_check.sh
+    mode: a+x
 
 - name: Start Filebeat
   ansible.builtin.service:
