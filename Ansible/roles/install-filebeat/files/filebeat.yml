@@ -23,4 +23,4 @@ processors:
   - add_cloud_metadata: ~
 output.elasticsearch:
   hosts: ["elastic.service.kandula.consul:9200"]
-  index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+  index: "filebeat-%{[agent.version]}-%{[agent.name]}-%{+yyyy.MM.dd}"
