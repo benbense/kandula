@@ -1,0 +1,18 @@
+{
+    "services": [
+        {
+            "name": "filebeat",
+            "tags": [
+                "logging"
+            ],
+            "checks": [
+                {
+                    "id": "filebeat",
+                    "name": "Filebeat Service",
+                    "service_id": "filebeat",
+                    "ttl": "30s"
+                }
+            ]
+        }
+    ]
+}

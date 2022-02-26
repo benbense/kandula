@@ -1,0 +1,14 @@
+---
+- name: Download Filebeat
+  get_url:
+    url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.11.0-amd64.deb
+    dest: /home/ubuntu/filebeat-oss-7.11.0-amd64.deb
+
+- name: Install Filebeat
+  apt:
+    deb: /home/ubuntu/filebeat-oss-7.11.0-amd64.deb
+
+- name: Start Filebeat
+  ansible.builtin.service:
+    name: filebeat
+    state: started

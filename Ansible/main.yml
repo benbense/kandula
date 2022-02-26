@@ -34,6 +34,9 @@
     - role: install-consul
       when: is_consul_monitored == true
     - role: install-node-exporter
+    - role: install-filebeat
+    - role: install-elk
+      when: service == "elk"
     - role: install-prometheus
       when: service == "prometheus"
     - role: install-grafana

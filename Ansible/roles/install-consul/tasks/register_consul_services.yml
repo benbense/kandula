@@ -34,6 +34,23 @@
     src: node_exporter_service.json
     dest: /etc/consul.d/node_exporter_service.json
 
+- name: Register Filebeat service
+  copy:
+    src: filebeat_service.json
+    dest: /etc/consul.d/filebeat_service.json
+
+- name: Register Kibana service
+  when: service == "elk" and instance_type == "server"
+  copy:
+    src: kibana_service.json
+    dest: /etc/consul.d/kibana_service.json
+
+- name: Register Elasticsearch service
+  when: service == "elk" and instance_type == "server"
+  copy:
+    src: elastic_service.json
+    dest: /etc/consul.d/elastic_service.json
+
 - name: Reload Consul service
   systemd:
     name: consul.service
