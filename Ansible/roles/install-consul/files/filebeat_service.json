@@ -9,8 +9,11 @@
                 {
                     "id": "filebeat",
                     "name": "Filebeat Service",
-                    "service_id": "filebeat",
-                    "ttl": "30s"
+                    "args": [
+                        "/home/ubuntu/filebeat_health_check.sh"
+                    ],
+                    "interval": "10s",
+                    "timeout": "1s"
                 }
             ]
         }

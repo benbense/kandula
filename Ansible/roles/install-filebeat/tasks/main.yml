@@ -13,6 +13,11 @@
     src: filebeat.yml
     dest: /etc/filebeat/filebeat.yml
 
+- name: Copy Filebeat health check file
+  copy:
+    src: filebeat_health_check.sh
+    dest: /home/ubuntu/filebeat_health_check.sh
+
 - name: Start Filebeat
   ansible.builtin.service:
     name: filebeat
