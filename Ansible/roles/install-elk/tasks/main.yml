@@ -17,6 +17,11 @@
   apt:
     deb: /home/ubuntu/kibana-oss-7.10.2-amd64.deb
 
+- name: Copy Elasticsearch config file
+  copy:
+    src: elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+
 - name: Configure Server hosts
   shell: |
     echo 'server.host: "0.0.0.0"' > /etc/kibana/kibana.yml

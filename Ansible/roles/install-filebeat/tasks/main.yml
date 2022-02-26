@@ -8,6 +8,11 @@
   apt:
     deb: /home/ubuntu/filebeat-oss-7.11.0-amd64.deb
 
+- name: Copy Filebeat config file
+  copy:
+    src: filebeat.yml
+    dest: /etc/filebeat/filebeat.yml
+
 - name: Start Filebeat
   ansible.builtin.service:
     name: filebeat
