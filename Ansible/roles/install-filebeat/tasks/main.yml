@@ -23,3 +23,6 @@
   ansible.builtin.service:
     name: filebeat
     state: started
+
+- include_tasks: k8s.yml
+  when: service == "ansible"
