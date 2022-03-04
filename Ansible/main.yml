@@ -33,15 +33,25 @@
   roles:
     - role: install-consul
       when: is_consul_monitored == true
+
     - role: install-node-exporter
+
+    - role: install-kubectl
+      when: (service == "jenkins" and instance_type == "node") or (service == "ansible")
+
     - role: install-filebeat
+
     - role: install-elk
       when: service == "elk"
+
     - role: install-prometheus
       when: service == "prometheus"
+
     - role: install-grafana
       when: service == "grafana"
+
     - role: install-jenkins
       when: service == "jenkins"
+
     - role: install-psql
       when: service == "bastion"
