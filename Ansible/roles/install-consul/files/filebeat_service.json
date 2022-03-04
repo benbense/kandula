@@ -1,0 +1,21 @@
+{
+    "services": [
+        {
+            "name": "filebeat",
+            "tags": [
+                "logging"
+            ],
+            "checks": [
+                {
+                    "id": "filebeat",
+                    "name": "Filebeat Service",
+                    "args": [
+                        "/home/ubuntu/filebeat_health_check.sh"
+                    ],
+                    "interval": "10s",
+                    "timeout": "1s"
+                }
+            ]
+        }
+    ]
+}

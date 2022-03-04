@@ -1,12 +1,4 @@
 ---
-# - name: Download kubectl binary
-#   get_url:
-#     url: "https://dl.k8s.io/release/v1.23.1/bin/linux/amd64/kubectl"
-#     dest: /tmp
-
-# - name: Install kubectl
-#   shell: sudo install -o root -g root -m 0755 /tmp/kubectl /usr/local/bin/kubectl
-
 - name: Add GPG key
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg

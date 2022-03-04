@@ -1,0 +1,19 @@
+{
+    "services": [
+        {
+            "name": "kibana-server",
+            "tags": [
+                "logging"
+            ],
+            "port": 5601,
+            "checks": [
+                {
+                    "name": "tcp-5601",
+                    "tcp": "localhost:5601",
+                    "interval": "5s",
+                    "timeout": "10s"
+                }
+            ]
+        }
+    ]
+}
