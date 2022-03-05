@@ -57,3 +57,8 @@ output "prometheus_alb_public_dns" {
   description = "Prometheus ALB Public DNS name"
   value       = module.servers.prometheus_alb_public_dns
 }
+
+output "elk_server_private_ip" {
+  description = "Private IP of the ELK server"
+  value       = module.servers.elk_server_private_ip
+}
