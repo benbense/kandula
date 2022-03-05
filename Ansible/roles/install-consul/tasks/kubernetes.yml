@@ -10,6 +10,14 @@
     src: helm_config.yml
     dest: /home/ubuntu/helm_config.yml
 
-- name: Deploy Consul with Helm
+- name: Add Consul gossip encription key
   become: false
   shell: kubectl create secret generic consul-gossip-encryption-key --from-literal=key=uDBV4e+LbFW3019YKPxIrg==
+
+- name: Deploy Consul chart using values file
+  kubernetes.core.helm:
+    name: consul
+    chart_ref: hashicorp/consul
+    release_namespace: default
+    values_files:
+      - /home/ubuntu/helm_config.yml
