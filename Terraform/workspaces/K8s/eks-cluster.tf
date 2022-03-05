@@ -41,14 +41,14 @@ module "eks" {
       instance_type                 = "t3.medium"
       additional_userdata           = "echo foo bar"
       asg_desired_capacity          = 2
-      additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
+      additional_security_group_ids = [aws_security_group.all_worker_mgmt.id, aws_security_group.node_exporter_sg_k8s.id]
     },
     {
       name                          = "worker-group-2"
       instance_type                 = "t3.large"
       additional_userdata           = "echo foo bar"
       asg_desired_capacity          = 2
-      additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
+      additional_security_group_ids = [aws_security_group.all_worker_mgmt.id, aws_security_group.node_exporter_sg_k8s.id]
     }
   ]
   map_roles = [
