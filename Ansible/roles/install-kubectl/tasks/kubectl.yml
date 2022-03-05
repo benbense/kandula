@@ -7,7 +7,7 @@
   apt_repository:
     repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
 
-- name: Install Kubernetes
+- name: Install kubectl
   apt:
     name: kubectl
     update_cache: yes
