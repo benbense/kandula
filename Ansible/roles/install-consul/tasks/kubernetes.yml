@@ -1,9 +1,8 @@
 ---
 - name: Add Consul repo
   become: false
-  kubernetes.core.helm_repository:
-    name: stable
-    repo_url: "https://helm.releases.hashicorp.com"
+  shell: helm repo add hashicorp https://helm.releases.hashicorp.com
+  ignore_errors: true
 
 - name: Copy Helm config
   copy:
@@ -13,11 +12,9 @@
 - name: Add Consul gossip encription key
   become: false
   shell: kubectl create secret generic consul-gossip-encryption-key --from-literal=key=uDBV4e+LbFW3019YKPxIrg==
+  ignore_errors: true
 
 - name: Deploy Consul chart using values file
-  kubernetes.core.helm:
-    name: consul
-    chart_ref: hashicorp/consul
-    release_namespace: default
-    values_files:
-      - /home/ubuntu/helm_config.yml
+  become: false
+  shell: helm install consul hashicorp/consul --namespace default --values /home/ubuntu/helm_config.yml
+  ignore_errors: true
