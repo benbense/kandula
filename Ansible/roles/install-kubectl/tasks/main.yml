@@ -2,3 +2,7 @@
 # tasks file for install-kubectl
 - include_tasks: kubectl.yml
   name: Install Kubernetes
+
+- include_tasks: helm.yml
+  name: Install Helm
+  when: service == "ansible"

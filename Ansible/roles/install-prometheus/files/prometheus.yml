@@ -5,23 +5,32 @@ global:
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: "prometheus"
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
-
+  - job_name: "kubernetes_state_metrics"
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ["kube-state-metrics-kube-system.service.kandula.consul:8080"]
+    metric_relabel_configs:
+      - target_label: cluster
+        replacement: eks
 
-  - job_name: "node_exporter"
+  - job_name: "node_exporter_ubuntu"
     consul_sd_configs:
       - server: "localhost:8500"
         services:
-          - "node_exporter"
+          - "node-exporter"
     relabel_configs:
       - source_labels: ["__meta_consul_node"]
         replacement: "$1"
         target_label: instance
+
+  - job_name: "node_exporter_kubernetes"
+    consul_sd_configs:
+      - server: "localhost:8500"
+        services:
+          - "node-exporter-monitoring"
+    relabel_configs:
+      - source_labels: ["__meta_consul_service_id"]
+        replacement: "$1"
+        target_label: pod
 
   - job_name: "consul_metrics"
     consul_sd_configs:

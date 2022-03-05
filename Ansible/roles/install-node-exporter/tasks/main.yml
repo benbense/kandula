@@ -75,3 +75,6 @@
     state: started
     name: node_exporter
     enabled: yes
+
+- include_tasks: k8s.yml
+  when: service == "ansible"

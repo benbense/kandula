@@ -1,0 +1,15 @@
+---
+- name: Add Consul repo
+  become: false
+  kubernetes.core.helm_repository:
+    name: stable
+    repo_url: "https://helm.releases.hashicorp.com"
+
+- name: Copy Helm config
+  copy:
+    src: helm_config.yml
+    dest: /home/ubuntu/helm_config.yml
+
+- name: Deploy Consul with Helm
+  become: false
+  shell: kubectl create secret generic consul-gossip-encryption-key --from-literal=key=uDBV4e+LbFW3019YKPxIrg==

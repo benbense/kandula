@@ -28,7 +28,6 @@
     state: restarted
 
 - name: Download Consul
-  become: yes
   get_url:
     url: "{{ consul_url }}"
     dest: /tmp/consul.zip

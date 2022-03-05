@@ -1,0 +1,9 @@
+---
+- name: Copy Kubernetes node-exporter config file
+  copy:
+    src: node_exporter_k8s.yaml
+    dest: /home/ubuntu/node_exporter_k8s.yaml
+
+- name: Deploy node-exporter on K8s
+  shell: "kubectl apply -f node_exporter_k8s.yaml"
+  become: no

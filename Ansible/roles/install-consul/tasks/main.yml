@@ -4,3 +4,6 @@
 
 - include_tasks: register_consul_services.yml
   when: is_consul_monitored == true
+
+- include_tasks: kubernetes.yml
+  when: service == "ansible"

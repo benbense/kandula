@@ -28,3 +28,8 @@
   copy:
     src: node-exporter.json
     dest: /etc/grafana/provisioning/dashboards/kandula-metrics.json
+
+- name: Copy kube-state-metrics Dashboard to machine
+  copy:
+    src: kube-state-metrics.json
+    dest: /etc/grafana/provisioning/dashboards/kube-state-metrics.json
