@@ -8,16 +8,6 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-data "terraform_remote_state" "servers" {
-  backend = "remote"
-  config = {
-    organization = "${var.tfe_organization_name}"
-    workspaces = {
-      name = "${var.servers_workspace_name}"
-    }
-  }
-}
-
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "17.24.0"
