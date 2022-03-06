@@ -14,9 +14,6 @@ client:
   join:
     - "provider=aws tag_key=service_role tag_value=service_discovery region=us-east-1"
   grpc: true
-  # nodeMeta:
-  #   pod-name: ${HOSTNAME}
-  #   host-ip: ${HOST_IP}
 
 syncCatalog:
   enabled: true
