@@ -70,9 +70,6 @@ After all requirements mentioned above have been completed make sure your `vars.
 | ------------------ | --------------------------------- | ------------------- |
 | dockerhub-benbense | DockerHub User                    | Username + Password |
 | github-benbense    | Github User                       | SSH Username + Key  |
-| aws-access-key     | AWS Access Key                    | Secret Text         |
-| aws-secret-key     | AWS Secret Access Key             | Secret Text         |
-| aws-default-region | AWS Default Region                | Secret Text         |
 | aws-ssl-arn        | SSL Certificate's ARN             | Secret Text         |
 | aws-ubuntu         | SSH credentials for Jenkins Nodes | SSH Username + Key  |
 
