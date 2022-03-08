@@ -16,6 +16,7 @@ module "servers" {
   private_subnets_ids   = data.terraform_remote_state.vpc.outputs.private_subnets_ids
   instance_profile_name = data.terraform_remote_state.vpc.outputs.instance_profile_name
   kandula_ssl_cert      = data.terraform_remote_state.vpc.outputs.kandula_ssl_cert
+  route53_zone_id       = data.terraform_remote_state.vpc.outputs.route53_zone_id
   instance_type         = var.instance_type
   bucket_name           = var.bucket_name
   consul_servers_count  = var.consul_servers_count
