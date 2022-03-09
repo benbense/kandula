@@ -17,7 +17,8 @@ client:
   nodeMeta:
     pod-name: ${HOSTNAME}
     host-ip: ${HOST_IP}
-
+dns:
+  enabled: true
 syncCatalog:
   enabled: true
   k8sAllowNamespaces: ["*"]
