@@ -19,6 +19,7 @@ client:
     host-ip: ${HOST_IP}
 dns:
   enabled: true
+  clusterIP: "172.20.20.20"
 syncCatalog:
   enabled: true
   k8sAllowNamespaces: ["*"]
