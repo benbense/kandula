@@ -45,7 +45,7 @@
       when: service == "elk"
 
     - role: install-prometheus
-      when: service == "prometheus"
+      when: (service == "prometheus") or ((service == "ansible"))
 
     - role: install-grafana
       when: service == "grafana"

@@ -1,6 +1,7 @@
 ---
 - include_tasks: server.yml
   name: Install Prometheus Server
+  when: service == "prometheus"
 
 - include_tasks: kubernetes.yml
   when: service == "ansible"
