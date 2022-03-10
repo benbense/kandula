@@ -10,4 +10,4 @@ datasources:
     type: prometheus
     access: proxy
     url: http://prometheus-operated-default.service.kandula.consul:9090
-    isDefault: true
+    isDefault: false

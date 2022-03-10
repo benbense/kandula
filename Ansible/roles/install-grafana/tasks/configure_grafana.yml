@@ -19,7 +19,7 @@
     src: dashboard.yml
     dest: /etc/grafana/provisioning/dashboards/dashboard.yml
 
-- name: Copy node-exporter Dashboard to machine
+- name: Copy Dashboards to the machine
   copy:
-    src: files/
+    src: files/dashboards/
     dest: /etc/grafana/provisioning/dashboards/
