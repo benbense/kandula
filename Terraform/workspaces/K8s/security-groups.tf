@@ -53,7 +53,7 @@ resource "aws_security_group" "kube_state_metrics_sg_k8s" {
 }
 
 resource "aws_security_group" "consul_sg_k8s" {
-  name        = "kube_state_metrics_sg_k8s"
+  name        = "consul_sg_k8s"
   description = "Security group for Kube State Metrics"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
