@@ -7,7 +7,7 @@ scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: "kubernetes_state_metrics"
     static_configs:
-      - targets: ["kube-state-metrics-kube-system.service.kandula.consul:8080"]
+      - targets: ["prom-kube-state-metrics-default.service.kandula.consul:8080"]
     metric_relabel_configs:
       - target_label: cluster
         replacement: eks
@@ -26,7 +26,7 @@ scrape_configs:
     consul_sd_configs:
       - server: "localhost:8500"
         services:
-          - "node-exporter-monitoring"
+          - "prom-prometheus-node-exporter-default"
     relabel_configs:
       - source_labels: ["__meta_consul_service_id"]
         replacement: "$1"

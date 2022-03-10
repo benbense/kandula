@@ -1,0 +1,10 @@
+---
+- name: Add Prometheus repo
+  become: false
+  shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  ignore_errors: true
+
+- name: Deploy Prometheus chart using values file
+  become: false
+  shell: helm install prom prometheus-community/kube-prometheus-stack --set grafana.enabled=false
+  ignore_errors: true
