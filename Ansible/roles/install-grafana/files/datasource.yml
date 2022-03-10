@@ -6,3 +6,8 @@ datasources:
     access: proxy
     url: http://prometheus.service.kandula.consul:9090
     isDefault: true
+  - name: Prometheus-K8s
+    type: prometheus
+    access: proxy
+    url: http://prometheus-operated-default.service.kandula.consul:9090
+    isDefault: true
