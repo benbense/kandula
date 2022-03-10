@@ -43,7 +43,7 @@ data:
     setup.template.pattern: "filebeat-*"
 
     output.elasticsearch:
-      hosts: ['<you elk host private ip>:9200']
+      hosts: ['kibana-server.service.consul:9200']
       index: "filebeat-k8s-%{[agent.version]}-%{+yyyy.MM.dd}"
 ---
 apiVersion: apps/v1
