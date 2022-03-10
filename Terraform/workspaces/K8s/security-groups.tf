@@ -16,32 +16,14 @@ resource "aws_security_group" "all_worker_mgmt" {
   }
 }
 
-resource "aws_security_group" "node_exporter_sg_k8s" {
-  name        = "node_exporter_sg_k8s"
-  description = "Security group for Node Exporter"
+resource "aws_security_group" "prometheus_sg_k8s" {
+  name        = "prometheus_sg_k8s"
+  description = "Security group for Prometheus"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
   ingress {
-    from_port = 9100
-    to_port   = 9100
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      "10.0.0.0/8",
-      "172.16.0.0/12",
-      "192.168.0.0/16",
-    ]
-  }
-}
-
-resource "aws_security_group" "kube_state_metrics_sg_k8s" {
-  name        = "kube_state_metrics_sg_k8s"
-  description = "Security group for Kube State Metrics"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
-
-  ingress {
-    from_port = 8080
-    to_port   = 8080
+    from_port = 9090
+    to_port   = 9090
     protocol  = "tcp"
 
     cidr_blocks = [
@@ -54,7 +36,7 @@ resource "aws_security_group" "kube_state_metrics_sg_k8s" {
 
 resource "aws_security_group" "consul_sg_k8s" {
   name        = "consul_sg_k8s"
-  description = "Security group for Kube State Metrics"
+  description = "Security group for Consul"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
   dynamic "ingress" {
