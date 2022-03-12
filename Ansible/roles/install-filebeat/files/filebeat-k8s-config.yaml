@@ -43,7 +43,7 @@ data:
     setup.template.pattern: "filebeat-*"
 
     output.elasticsearch:
-      hosts: ['elk.kandula:9200']
+      hosts: ['elk:9200']
       index: "filebeat-k8s-%{[agent.version]}-%{+yyyy.MM.dd}"
 ---
 apiVersion: apps/v1
