@@ -37,3 +37,7 @@ output "route53_zone_id" {
   description = "Hosted Zone ID"
   value       = module.vpc.route53_zone_id
 }
+
+output "cidr_block" {
+  description = "VPC CIDR Block"
+}
