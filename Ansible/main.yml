@@ -33,6 +33,7 @@
   roles:
     - role: install-kubectl
       when: (service == "jenkins" and instance_type == "node") or (service == "ansible")
+      ignore_errors: true
 
     - role: install-consul
       when: is_consul_monitored == true
