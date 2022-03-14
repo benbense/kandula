@@ -15,4 +15,4 @@
     update_cache: yes
 
 - name: Update Trivy Database
-  shell: trivy image --download-db-only
+  shell: trivy image --download-db-only=true
