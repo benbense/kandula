@@ -12,3 +12,8 @@ output "rds_port" {
   description = "RDS Port"
   value       = module.rds.rds_port
 }
+
+output "db_password" {
+  description = "RDS Password"
+  value = random_password.password.result
+}
