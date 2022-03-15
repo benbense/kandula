@@ -22,7 +22,10 @@
     owner: ubuntu
     group: ubuntu
 
+- name: Set PGPASSWORD Env. variable
+  command: "export PGPASSWORD={{ db_password }}"
+  no_log: True
+
 - name: Configure Database with SQL File
   command: psql -h rds.kandula -U postgres -d kandula -a -f /home/ubuntu/kandula.sql
-  environment:
-    PGPASSWORD: "{{ db_password }}"
+  no_log: True
