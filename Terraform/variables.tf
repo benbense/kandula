@@ -189,3 +189,8 @@ variable "db_username" {
   description = "DB Username"
   default     = "postgres"
 }
+
+variable "db_password" {
+  type        = string
+  description = "DB Password"
+}

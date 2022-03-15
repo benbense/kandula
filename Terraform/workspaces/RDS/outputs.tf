@@ -12,8 +12,3 @@ output "rds_port" {
   description = "RDS Port"
   value       = module.rds.rds_port
 }
-
-output "db_password" {
-  description = "RDS Password"
-  value = module.rds.db_password
-}

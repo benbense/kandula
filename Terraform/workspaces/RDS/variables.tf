@@ -23,3 +23,8 @@ variable "tfe_organization_name" {
   type        = string
   description = "TFE Organization Name"
 }
+
+variable "db_password" {
+  type = string
+  description = "DB Password"
+}
