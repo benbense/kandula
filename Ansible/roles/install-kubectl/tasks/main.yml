@@ -3,6 +3,10 @@
 - include_tasks: kubectl.yml
   name: Install Kubernetes
 
+- include_tasks: k8s-metrics-server.yml
+  name: Install K8s Metrics Server
+  when: service == "ansible"
+
 - include_tasks: helm.yml
   name: Install Helm
   when: service == "ansible"
