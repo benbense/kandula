@@ -66,3 +66,8 @@ variable "db_username" {
   type        = string
   description = "DB Username"
 }
+
+variable "db_password" {
+  type        = string
+  description = "DB Password"
+}
