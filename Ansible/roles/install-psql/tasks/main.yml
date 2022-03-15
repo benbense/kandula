@@ -14,3 +14,15 @@
       - pgadmin4-desktop
     update_cache: yes
     state: present
+
+- name: Copy .sql file to machine
+  copy:
+    src: kandula.sql
+    dest: /home/ubuntu/kandula.sql
+    owner: ubuntu
+    group: ubuntu
+
+- name: Configure Database with SQL File
+  command: psql -h rds.kandula -U postgres -d kandula -a -f /home/ubuntu/kandula.sql
+  environment:
+    PGPASSWORD: "{{ db_password }}"

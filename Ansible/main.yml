@@ -55,4 +55,4 @@
       when: service == "jenkins"
 
     - role: install-psql
-      when: service == "bastion"
+      when: service == "ansible"
