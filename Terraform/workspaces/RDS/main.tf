@@ -12,9 +12,10 @@ module "rds" {
   version            = "1.0.1"
   vpc_id             = data.terraform_remote_state.vpc.outputs.vpc_id
   subnets_ids        = data.terraform_remote_state.vpc.outputs.public_subnets_ids
+  route53_zone_id    = data.terraform_remote_state.vpc.outputs.route53_zone_id
   db_identifier_name = var.db_identifier_name
   engine_version     = var.engine_version
   instance_class     = var.instance_class
   db_username        = var.db_username
-  db_password = var.db_password
+  db_password        = var.db_password
 }
