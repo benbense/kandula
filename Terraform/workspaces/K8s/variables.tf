@@ -39,3 +39,7 @@ variable "AWS_SECRET_ACCESS_KEY" {
   type        = string
   description = "AWS Secret Access Key"
 }
+variable "db_password" {
+  type        = string
+  description = "DB Password"
+}

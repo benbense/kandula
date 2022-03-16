@@ -64,9 +64,10 @@ resource "kubernetes_secret" "aws_creds" {
   }
 
   data = {
-    username = var.AWS_ACCESS_KEY_ID
-    password = var.AWS_SECRET_ACCESS_KEY
+    username    = var.AWS_ACCESS_KEY_ID
+    password    = var.AWS_SECRET_ACCESS_KEY
+    db_password = var.db_password
   }
 
-  type = "kubernetes.io/basic-auth"
+  type = "Opaque"
 }

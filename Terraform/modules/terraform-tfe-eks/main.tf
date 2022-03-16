@@ -95,3 +95,11 @@ resource "tfe_variable" "k8s_service_account_name" {
   workspace_id = tfe_workspace.kubernetes.id
   category     = "terraform"
 }
+resource "tfe_variable" "db_password" {
+  key          = "db_password"
+  value        = var.db_password
+  description  = "DB Password"
+  workspace_id = tfe_workspace.rds.id
+  category     = "terraform"
+  sensitive    = true
+}

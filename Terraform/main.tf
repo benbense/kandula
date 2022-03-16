@@ -61,6 +61,7 @@ module "eks" {
   k8s_service_account_namespace  = var.k8s_service_account_namespace
   k8s_service_account_name       = var.k8s_service_account_name
   servers_workspace_name         = var.servers_workspace_name
+  db_password                    = var.db_password
 }
 
 module "rds" {
