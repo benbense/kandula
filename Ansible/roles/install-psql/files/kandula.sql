@@ -1,13 +1,19 @@
+-- SCHEMA: kandula
+
+DROP SCHEMA IF EXISTS kandula CASCADE;
+
+CREATE SCHEMA IF NOT EXISTS kandula
+    AUTHORIZATION postgres;
+
 -- Table: kandula.instances_shutdown
 
-DROP TABLE IF EXISTS kandula.instances_shutdown;
+DROP TABLE IF EXISTS kandula.instances_shutdown CASCADE;
 
 CREATE TABLE IF NOT EXISTS kandula.instances_shutdown
 (
-    job_id integer NOT NULL GENERATED ALWAYS AS (0) STORED,
+    job_id SERIAL NOT NULL PRIMARY KEY,
     instance_id character varying(20) COLLATE pg_catalog."default" NOT NULL,
-    shutdown_time integer NOT NULL,
-    CONSTRAINT instances_shutdown_pkey PRIMARY KEY (job_id)
+    shutdown_time integer NOT NULL
 )
 
 TABLESPACE pg_default;
@@ -18,7 +24,7 @@ ALTER TABLE IF EXISTS kandula.instances_shutdown
 
 -- Table: kandula.instances_shutdown_log
 
-DROP TABLE IF EXISTS kandula.instances_shutdown_log;
+DROP TABLE IF EXISTS kandula.instances_shutdown_log CASCADE;
 
 CREATE TABLE IF NOT EXISTS kandula.instances_shutdown_log
 (
