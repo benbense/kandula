@@ -1,7 +1,13 @@
 ---
-- name: Install Java
+- name: Install Node Prerequisites
   apt:
     name:
       - openjdk-11-jdk
+      - python3-venv
+      - libpq-dev
+      - python-psycopg2
     update_cache: yes
     state: present
+
+- name: Upgrade pip
+  shell: "pip3 install -U pip"

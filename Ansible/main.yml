@@ -46,7 +46,7 @@
       when: service == "elk"
 
     - role: install-prometheus
-      when: (service == "prometheus") or ((service == "ansible"))
+      when: (service == "prometheus") or (service == "ansible")
 
     - role: install-grafana
       when: service == "grafana"
@@ -55,4 +55,4 @@
       when: service == "jenkins"
 
     - role: install-psql
-      when: service == "ansible"
+      when: service == "ansible" or (service == "jenkins" and instance_type == "node")
