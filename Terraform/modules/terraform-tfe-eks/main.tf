@@ -99,7 +99,7 @@ resource "tfe_variable" "db_password" {
   key          = "db_password"
   value        = var.db_password
   description  = "DB Password"
-  workspace_id = tfe_workspace.rds.id
+  workspace_id = tfe_workspace.kubernetes.id
   category     = "terraform"
   sensitive    = true
 }
