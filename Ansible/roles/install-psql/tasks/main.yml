@@ -12,6 +12,7 @@
   apt:
     name:
       - pgadmin4-desktop
+      - python-psycopg2
     update_cache: yes
     state: present
 
@@ -22,10 +23,12 @@
     owner: ubuntu
     group: ubuntu
 
-- name: Set PGPASSWORD Env. variable
-  command: "export PGPASSWORD={{ db_password }}"
-  no_log: True
-
-- name: Configure Database with SQL File
-  command: psql -h rds.kandula -U postgres -d kandula -a -f /home/ubuntu/kandula.sql
-  no_log: True
+- name: Run SQL script to provision the database
+  when: service == "ansible"
+  postgresql_query:
+    login_host: "rds.kandula"
+    login_user: "postgres"
+    login_password: "{{ db_password }}"
+    port: "5432"
+    db: "kandula"
+    path_to_script: /home/ubuntu/kandula.sql
