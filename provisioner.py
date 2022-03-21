@@ -1,5 +1,3 @@
-from cmath import log
-import boto3
 import sys
 import os
 import time
@@ -127,7 +125,7 @@ def ssh_client_connection(host_ip, private_key_file_path):
 
 
 def scp_file_copy(ssh_session, file, remote_path):
-    with SCPClient(ssh_session.get_transport(), progress=progress, socket_timeout=60) as scp:
+    with SCPClient(ssh_session.get_transport(), progress=progress) as scp:
         scp.put(file, remote_path=remote_path, recursive=True)
 
 
@@ -284,7 +282,7 @@ def get_terraform_vars_from_file(terraform_var_file_path):
 def wait_for_plan_status(session: Session, run_id, statuses):
     # TODO - add max retries
     while True:
-        time.sleep(3)
+        time.sleep(5)
         response = session.get(
             f"https://app.terraform.io/api/v2/runs/{run_id}")
         if response.status_code != 200:
@@ -361,15 +359,17 @@ def run_terraform(terraform_var_file_path, terraform_txt_vars):
         session, terraform_vars["tfe_organization_name"], terraform_vars["rds_workspace_name"])
 
     run_plan_to_completion(
-        session, [vpc_workspace, servers_workspace, kubernetes_workspace]
+        session, [vpc_workspace, servers_workspace,
+                  kubernetes_workspace, rds_workspace]
     )
 
-    return get_workspace_outputs(session, [vpc_workspace, servers_workspace, kubernetes_workspace])
+    return get_workspace_outputs(session, [vpc_workspace, servers_workspace, kubernetes_workspace, rds_workspace])
 
 
 @log_function
 def run_ansible(terraform_vars, workspaces_outputs):
     private_key_file_path = terraform_vars["private_key_path"]
+    github_branch = terraform_vars["github_branch"]
     ansible_files = f"/home/ubuntu/kandula/Ansible"
 
     eks_cluster_name = workspaces_outputs['VPC-Workspace']['cluster_name']
@@ -377,6 +377,7 @@ def run_ansible(terraform_vars, workspaces_outputs):
     bastion_host_private_ip = workspaces_outputs['Servers-Workspace']['bastion_server_private_ip'][0]
     ansible_host_private_ip = workspaces_outputs['Servers-Workspace']['ansible_server_private_ip'][0]
     aws_default_region = terraform_vars['aws_default_region']
+    db_password = terraform_vars['db_password']
     consul_servers_amount = 3
 
     bastion_ssh_session = ssh_client_connection(
@@ -388,7 +389,6 @@ def run_ansible(terraform_vars, workspaces_outputs):
     scp_file_copy(
         ansible_ssh_session, private_key_file_path, "/home/ubuntu/.ssh/id_rsa"
     )
-    # scp_file_copy(ansible_ssh_session, ansible_files, "~/")
 
     ssh_commands = [
         "chmod 600 /home/ubuntu/.ssh/id_rsa",
@@ -401,17 +401,18 @@ def run_ansible(terraform_vars, workspaces_outputs):
         "sudo add-apt-repository --yes --update ppa:ansible/ansible",
         "sudo apt install ansible -y",
         "sudo apt install python-boto3 -y",
-        "git clone -b develop https://github.com/benbense/kandula.git /home/ubuntu/kandula",
+        f"git clone -b {github_branch} https://github.com/benbense/kandula.git /home/ubuntu/kandula",
     ]
 
     install_ansible_modules = [
         "ansible-galaxy collection install community.general",
         "ansible-galaxy collection install community.docker",
-        "ansible-galaxy collection install amazon.aws"
+        "ansible-galaxy collection install amazon.aws",
+        "ansible-galaxy collection install community.postgresql",
     ]
 
     run_ansible_playbook_commands = [
-        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} aws_default_region={aws_default_region}"'
+        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} aws_default_region={aws_default_region} db_password={db_password}"'
     ]
 
     ssh_run_commands(ansible_ssh_session, ssh_commands)
