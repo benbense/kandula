@@ -45,6 +45,9 @@
     - role: install-elk
       when: service == "elk"
 
+    - role: install-logstash
+      when: service == "elk"
+
     - role: install-prometheus
       when: (service == "prometheus") or (service == "ansible")
 
