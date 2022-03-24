@@ -177,7 +177,7 @@ variable "db_identifier_name" {
 variable "engine_version" {
   type        = string
   description = "DB Engine Version"
-  default     = "12.6"
+  default     = "12.9"
 }
 variable "instance_class" {
   type        = string
