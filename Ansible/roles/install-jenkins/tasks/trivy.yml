@@ -15,4 +15,5 @@
     update_cache: yes
 
 - name: Update Trivy Database
-  shell: trivy image --download-db-only=true
+  shell: trivy --cache-dir=/home/ubuntu/.cache/trivy image --download-db-only=true
+  become: false
