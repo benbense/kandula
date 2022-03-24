@@ -19,15 +19,25 @@
 ## Features
 
 This deployment tool will deploy:
-+ 3 Worksapces in Terraform Cloud
++ 4 Worksapces in Terraform Cloud
   + VPC Workspace
   + Servers Workspace
-  + Kubernetes Cluster
+  + Kubernetes Cluster Workspace
+  + RDS Workspace
 + Ansible Playbook
-  + Install and configure Consul
-  + Install 1 Jenkins server & 2 Jenkins nodes
+  + Install and configure the following components:
+    + Consul
+    + ELK
+    + Filebeat
+    + Grafana
+    + Jenkins
+    + Node Exporter
+    + Prometheus
+    + Other tools such as: psql, kubectl, trivy, etc.
 + Kubernetes Cluser
   + 2 Workers inside 2 different subnets
++ RDS
+  + Free tier PostgreSQL database
 
 
 ## Prerequisites 
