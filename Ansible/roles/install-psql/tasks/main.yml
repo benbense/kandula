@@ -28,12 +28,8 @@
     owner: ubuntu
     group: ubuntu
 
-- name: Run SQL script to provision the database
-  when: service == "ansible"
-  postgresql_query:
-    login_host: "rds.kandula"
-    login_user: "postgres"
-    login_password: "{{ db_password }}"
-    port: "5432"
-    db: "kandula"
-    path_to_script: /home/ubuntu/kandula.sql
+- name: Configure Database with SQL File
+  environment:
+    PGPASSWORD: "{{ db_password }}"
+  command: psql --host=rds.kandula --port=5432 --username=postgres --dbname=kandula -a -f /home/ubuntu/kandula.sql
+  no_log: True
