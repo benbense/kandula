@@ -12,13 +12,8 @@
   apt:
     name:
       - pgadmin4-desktop
-      - python-psycopg2
     update_cache: yes
     state: present
-
-- name: Install boto3 pip
-  pip:
-    name: psycopg2-binary
 
 - name: Copy .sql file to machine
   when: service == "ansible"
