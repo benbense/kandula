@@ -78,10 +78,10 @@ After all requirements mentioned above have been completed make sure your `vars.
 
 | ID                 | Description                       | Value Type          |
 | ------------------ | --------------------------------- | ------------------- |
-| dockerhub-benbense | DockerHub User                    | Username + Password |
-| github-benbense    | Github User                       | SSH Username + Key  |
-| aws-ssl-arn        | SSL Certificate's ARN             | Secret Text         |
+| dockerhub-kandula | DockerHub User                    | Username + Password |
+| github-kandula    | Github User                       | SSH Username + Key  |
 | aws-ubuntu         | SSH credentials for Jenkins Nodes | SSH Username + Key  |
+| aws-ssl-arn        | SSL Certificate's ARN             | Secret Text         |
 
 </center>
 
@@ -122,6 +122,7 @@ Notes:
 | tfe_organization_email | Terraform Cloud Organization Admin Email Address                                                                                                                                      | str  |
 | aws_default_region     | AWS Default Region                                                                                                                                                                    | str  |
 | elb_account_id         | ELB Account ID - [Pick one according to region](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html#access-logging-bucket-permissions) | int  |
+| db_password | Database password | str
 
 ## Defaults
 > All of those values are pre-filled in the `Terraform/variables.tf` file but can be modified by the user.
