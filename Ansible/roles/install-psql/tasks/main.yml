@@ -1,4 +1,3 @@
----
 - name: Add GPG key
   apt_key:
     url: https://www.pgadmin.org/static/packages_pgadmin_org.pub
@@ -15,6 +14,16 @@
     update_cache: yes
     state: present
 
+- name: Update pip3 package
+  pip: 
+    name: pip
+    state: latest
+
+- name: Install boto3 pip
+  pip:
+    name:
+      - psycopg2-binary
+
 - name: Copy .sql file to machine
   when: service == "ansible"
   copy:
@@ -27,4 +36,15 @@
   environment:
     PGPASSWORD: "{{ db_password }}"
   command: psql --host=rds.kandula --port=5432 --username=postgres --dbname=kandula -a -f /home/ubuntu/kandula.sql
-  no_log: True
+  no_log: False
+
+
+
+
+
+
+
+
+
+
+
