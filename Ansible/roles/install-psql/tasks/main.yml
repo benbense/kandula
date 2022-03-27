@@ -32,7 +32,8 @@
     owner: ubuntu
     group: ubuntu
 
-- name: Configure Database with SQL File
+- name: Configure Database with SQL 
+  when: service == "ansible"
   environment:
     PGPASSWORD: "{{ db_password }}"
   command: psql --host=rds.kandula --port=5432 --username=postgres --dbname=kandula -a -f /home/ubuntu/kandula.sql
