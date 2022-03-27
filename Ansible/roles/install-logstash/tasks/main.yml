@@ -1,13 +1,52 @@
 ---
-- name: Include OS Specific setup tasks
-  include: setup-{{ ansible_os_family }}.yml
+- name: Ensure required dependencies are installed for Logstash
+  apt:
+    name:
+      - apt-transport-https
+      - gnupg2
+      - default-jre
+    state: present
 
-- include: config.yml
-- include: ssl.yml
-- include: plugins.yml
+- name: Download Logstash OSS version
+  get_url:
+    url: https://artifacts.elastic.co/downloads/logstash/logstash-oss-{{ logstash_version }}-amd64.deb
+    dest: /tmp/logstash-oss-{{ logstash_version }}-amd64.deb
+
+- name: Install Logstash OSS version
+  apt:
+    deb: /tmp/logstash-oss-{{ logstash_version }}-amd64.deb
+
+- name: Copy Logstash config file
+  copy:
+    src: logstash_alb.conf
+    dest: /etc/logstash/conf.d/logstash_alb.conf
+
+- name: Add Logstash user to adm group (Debian).
+  user:
+    name: logstash
+    group: logstash
+    groups: adm
+  notify: restart logstash
+
+- name: Get Logstash list of installed plugins.
+  command: >
+    ./bin/logstash-plugin list
+    chdir={{ logstash_dir }}
+  register: logstash_plugins_list
+  changed_when: false
+
+- name: Install configured plugins.
+  command: >
+    ./bin/logstash-plugin install {{ item }}
+    chdir={{ logstash_dir }}
+  with_items: "{{ logstash_install_plugins }}"
+  when: "item not in logstash_plugins_list.stdout"
+  notify: restart logstash
 
 - name: Ensure Logstash is started and enabled on boot.
   service:
     name: logstash
     state: started
     enabled: "{{ logstash_enabled_on_boot }}"
+
+
