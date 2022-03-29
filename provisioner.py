@@ -128,6 +128,9 @@ def scp_file_copy(ssh_session, file, remote_path):
     with SCPClient(ssh_session.get_transport(), progress=progress) as scp:
         scp.put(file, remote_path=remote_path, recursive=True)
 
+def scp_file_download(ssh_session, remote_path, local_path):
+    with SCPClient(ssh_session.get_transport(), progress=progress) as scp:
+        scp.get(remote_path, local_path)
 
 def ssh_run_commands(ssh_session, commands: list):
     for command in commands:
@@ -421,6 +424,9 @@ def run_ansible(terraform_vars, workspaces_outputs):
     ssh_run_commands(ansible_ssh_session, run_ansible_playbook_commands)
 
     print("Done")
+
+    scp_file_download(bastion_ssh_session, "/home/ubuntu/kandula.ovpn", ".")
+    ssh_run_commands(bastion_ssh_session, ["rm /home/ubuntu/kandula.ovpn"])
 
 
 def run(vars_file_path):

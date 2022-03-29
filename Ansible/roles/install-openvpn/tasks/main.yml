@@ -1,0 +1,19 @@
+---
+- name: Download OpenVPN Installation script
+  get_url:
+    url: https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+    dest: /home/ubuntu/install-openvpn.sh
+    mode: 'u+x'
+
+- name: Deploy OpenVPN using script
+  environment:
+    APPROVE_IP: 'y'
+    IPV6_SUPPORT: 'n'
+    PORT_CHOICE: '1'
+    PROTOCOL_CHOICE: '1'
+    DNS: '1'
+    COMPRESSION_ENABLED: 'n'
+    CUSTOMIZE_ENC: 'n'
+    CLIENT: 'kandula'
+    PASS: '123456' # Used for testing only!
+  command: AUTO_INSTALL=y ./openvpn-install.sh
