@@ -362,8 +362,7 @@ def run_terraform(terraform_var_file_path, terraform_txt_vars):
         session, terraform_vars["tfe_organization_name"], terraform_vars["rds_workspace_name"])
 
     run_plan_to_completion(
-        session, [vpc_workspace, servers_workspace,
-                  kubernetes_workspace, rds_workspace]
+        session, [vpc_workspace, servers_workspace, kubernetes_workspace, rds_workspace]
     )
 
     return get_workspace_outputs(session, [vpc_workspace, servers_workspace, kubernetes_workspace, rds_workspace])
@@ -404,6 +403,7 @@ def run_ansible(terraform_vars, workspaces_outputs):
         "sudo add-apt-repository --yes --update ppa:ansible/ansible",
         "sudo apt install ansible -y",
         "sudo apt install python-boto3 -y",
+        "rm -rf /home/ubuntu/kandula",
         f"git clone -b {github_branch} https://github.com/benbense/kandula.git /home/ubuntu/kandula",
     ]
 
