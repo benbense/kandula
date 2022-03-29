@@ -59,3 +59,6 @@
 
     - role: install-psql
       when: service == "ansible" or (service == "jenkins" and instance_type == "node")
+    
+    - role: install-openvpn
+      when: service == "bastion"
