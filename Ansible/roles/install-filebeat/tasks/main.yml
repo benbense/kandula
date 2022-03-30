@@ -1,0 +1,28 @@
+---
+- name: Download Filebeat
+  get_url:
+    url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.11.0-amd64.deb
+    dest: /home/ubuntu/filebeat-oss-7.11.0-amd64.deb
+
+- name: Install Filebeat
+  apt:
+    deb: /home/ubuntu/filebeat-oss-7.11.0-amd64.deb
+
+- name: Copy Filebeat config file
+  copy:
+    src: filebeat.yml
+    dest: /etc/filebeat/filebeat.yml
+
+- name: Copy Filebeat health check file
+  copy:
+    src: filebeat_health_check.sh
+    dest: /home/ubuntu/filebeat_health_check.sh
+    mode: a+x
+
+- name: Start Filebeat
+  ansible.builtin.service:
+    name: filebeat
+    state: started
+
+- include_tasks: k8s.yml
+  when: service == "ansible"

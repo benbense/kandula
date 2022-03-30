@@ -2,10 +2,6 @@
 - include_tasks: docker.yml
   name: Install Docker
 
-- include_tasks: kubectl.yml
-  name: Install Kubernetes
-  when: instance_type == "node"
-
 - include_tasks: trivy.yml
   name: Install Trivy
   when: instance_type == "node"

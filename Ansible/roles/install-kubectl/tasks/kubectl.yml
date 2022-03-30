@@ -1,0 +1,21 @@
+---
+- name: Add GPG key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Setup Kubernetes stable repo
+  apt_repository:
+    repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+
+- name: Install kubectl
+  apt:
+    name: kubectl
+    update_cache: yes
+
+- name: Install Python AWS CLI
+  pip:
+    name: awscli
+
+- name: Configure kubectl with AWS
+  become: false
+  shell: aws eks --region={{ aws_default_region }} update-kubeconfig --name {{ eks_cluster_name }}

@@ -31,6 +31,8 @@
       "build-monitor-plugin",
       "docker-workflow",
       "kubernetes-cd",
+      "pyenv-pipeline",
+      "pipeline-stage-view"
     ]
   changed_when: true
 

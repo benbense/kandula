@@ -1,0 +1,77 @@
+---
+# tasks file for install-node-exporter
+- name: Download node_exporter
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_ver }}/node_exporter-{{ node_exporter_ver }}.linux-amd64.tar.gz
+    dest: /tmp/node_exporter-{{ node_exporter_ver }}.linux-amd64.tar.gz
+
+- name: Extract node_exporter
+  ansible.builtin.unarchive:
+    src: /tmp/node_exporter-{{ node_exporter_ver }}.linux-amd64.tar.gz
+    dest: /tmp
+
+- name: Copy service file
+  copy:
+    src: /tmp/node_exporter-{{ node_exporter_ver }}.linux-amd64/node_exporter
+    dest: /usr/local/bin/node_exporter
+
+- name: Create node_exporter group
+  group:
+    name: node_exporter
+    state: present
+
+- name: Add the node_exporter user
+  ansible.builtin.user:
+    name: node_exporter
+    groups: node_exporter
+    shell: /bin/false
+    create_home: no
+
+- name: Create collector folder
+  file:
+    path: /var/lib/node_exporter/textfile_collector
+    state: directory
+
+- name: Change node_exporter bin owner
+  ansible.builtin.file:
+    path: /usr/local/bin/node_exporter
+    owner: node_exporter
+    group: node_exporter
+
+- name: Change node_exporter directory owner
+  ansible.builtin.file:
+    path: /var/lib/node_exporter
+    owner: node_exporter
+    group: node_exporter
+
+- name: Change textfile_collector directory owner
+  ansible.builtin.file:
+    path: /var/lib/node_exporter/textfile_collector
+    owner: node_exporter
+    group: node_exporter
+
+- name: Copy node_exporter service file
+  copy:
+    src: node_exporter.service
+    dest: /etc/systemd/system/node_exporter.service
+
+- name: Changing permission of node_exporter
+  file: dest=/usr/local/bin/node_exporter mode=a+x
+
+- name: Create Crontab job
+  cron:
+    name: "log active users"
+    minute: "*"
+    hour: "*"
+    day: "*"
+    job: 'echo "logged_in_sessions $(who | wc -l)" > /var/lib/node_exporter/textfile_collector/logged_in_sessions.prom'
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Start node_exporter service
+  ansible.builtin.systemd:
+    state: started
+    name: node_exporter
+    enabled: yes

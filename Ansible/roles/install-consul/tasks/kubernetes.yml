@@ -1,0 +1,30 @@
+---
+- name: Add Consul repo
+  become: false
+  shell: helm repo add hashicorp https://helm.releases.hashicorp.com
+  ignore_errors: true
+
+- name: Copy Helm config
+  copy:
+    src: helm_config.yml
+    dest: /home/ubuntu/helm_config.yml
+
+- name: Copy CoreDNS config
+  copy:
+    src: coredns.yaml
+    dest: /home/ubuntu/coredns.yaml
+
+- name: Add Consul gossip encription key
+  become: false
+  shell: kubectl create secret generic consul-gossip-encryption-key --from-literal=key=uDBV4e+LbFW3019YKPxIrg==
+  ignore_errors: true
+
+- name: Deploy Consul chart using values file
+  become: false
+  shell: helm install consul hashicorp/consul --namespace default --values /home/ubuntu/helm_config.yml
+  ignore_errors: true
+
+- name: Configure K8s CoreNDS to use Consul
+  become: false
+  shell: kubectl apply -f /home/ubuntu/coredns.yaml
+  ignore_errors: true

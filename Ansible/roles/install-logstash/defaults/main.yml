@@ -1,0 +1,11 @@
+---
+logstash_version: '7.10.2'
+logstash_dir: /usr/share/logstash
+logstash_enabled_on_boot: true
+logstash_install_plugins:
+  - logstash-input-s3
+  - logstash-filter-mutate
+  - logstash-filter-geoip
+  - logstash-filter-grok
+  - logstash-filter-http
+  - logstash-output-elasticsearch

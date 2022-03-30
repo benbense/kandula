@@ -1,0 +1,12 @@
+---
+- name: Copy k8s Metrics Server HA Yaml
+  copy:
+    src: k8s-metrics-server-ha.yaml
+    dest: /home/ubuntu/k8s-metrics-server-ha.yaml
+    owner: ubuntu
+    group: ubuntu
+
+- name: Configure kubectl with AWS
+  become: false
+  shell: kubectl apply -f /home/ubuntu/k8s-metrics-server-ha.yaml
+  ignore_errors: true

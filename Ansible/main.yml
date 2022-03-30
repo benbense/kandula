@@ -31,7 +31,34 @@
         service: "{{ instance_info.instances | map(attribute='tags.service') | list | join('\n') }}"
 
   roles:
+    - role: install-kubectl
+      when: (service == "jenkins" and instance_type == "node") or (service == "ansible")
+      ignore_errors: true
+
     - role: install-consul
       when: is_consul_monitored == true
+
+    - role: install-node-exporter
+
+    - role: install-filebeat
+
+    - role: install-elk
+      when: service == "elk"
+
+    - role: install-logstash
+      when: service == "elk"
+
+    - role: install-prometheus
+      when: (service == "prometheus") or (service == "ansible")
+
+    - role: install-grafana
+      when: service == "grafana"
+
     - role: install-jenkins
       when: service == "jenkins"
+
+    - role: install-psql
+      when: service == "ansible" or (service == "jenkins" and instance_type == "node")
+    
+    - role: install-openvpn
+      when: service == "bastion"

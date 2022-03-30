@@ -1,0 +1,37 @@
+---
+- name: Download Elasticsearch
+  get_url:
+    url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.2-amd64.deb
+    dest: /home/ubuntu/elasticsearch-oss-7.10.2-amd64.deb
+
+- name: Download Kibana
+  get_url:
+    url: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-amd64.deb
+    dest: /home/ubuntu/kibana-oss-7.10.2-amd64.deb
+
+- name: Install Elasticsearch
+  apt:
+    deb: /home/ubuntu/elasticsearch-oss-7.10.2-amd64.deb
+
+- name: Install Kibana
+  apt:
+    deb: /home/ubuntu/kibana-oss-7.10.2-amd64.deb
+
+- name: Copy Elasticsearch config file
+  copy:
+    src: elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+
+- name: Configure Server hosts
+  shell: |
+    echo 'server.host: "0.0.0.0"' > /etc/kibana/kibana.yml
+
+- name: Start Elasticsearch
+  ansible.builtin.service:
+    name: elasticsearch
+    state: started
+
+- name: Start Kibana
+  ansible.builtin.service:
+    name: kibana
+    state: started

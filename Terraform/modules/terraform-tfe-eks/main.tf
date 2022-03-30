@@ -59,7 +59,7 @@ resource "tfe_variable" "aws_acess_key" {
   value        = var.aws_acess_key
   description  = "AWS Acess Key"
   workspace_id = tfe_workspace.kubernetes.id
-  category     = "env"
+  category     = "terraform"
   sensitive    = true
 }
 
@@ -68,7 +68,7 @@ resource "tfe_variable" "aws_secret_acess_key" {
   value        = var.aws_secret_acess_key
   description  = "AWS Secret Acess Key"
   workspace_id = tfe_workspace.kubernetes.id
-  category     = "env"
+  category     = "terraform"
   sensitive    = true
 }
 
@@ -94,4 +94,12 @@ resource "tfe_variable" "k8s_service_account_name" {
   description  = "Kubernetes Service Account Name"
   workspace_id = tfe_workspace.kubernetes.id
   category     = "terraform"
+}
+resource "tfe_variable" "db_password" {
+  key          = "db_password"
+  value        = var.db_password
+  description  = "DB Password"
+  workspace_id = tfe_workspace.kubernetes.id
+  category     = "terraform"
+  sensitive    = true
 }

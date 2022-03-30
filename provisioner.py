@@ -1,4 +1,3 @@
-import boto3
 import sys
 import os
 import time
@@ -31,25 +30,30 @@ def log_function(func):
 
     return log
 
+
 @log_function
 def generate_ssl_cert():
     KEY_FILE = "Terraform/SSL/private.pem"
     CERT_FILE = "Terraform/SSL/selfsigned.pem"
-    k = crypto.PKey()
-    k.generate_key(crypto.TYPE_RSA, 4096)
-    cert = crypto.X509()
-    cert.set_serial_number(1000)
-    cert.gmtime_adj_notBefore(0)
-    cert.gmtime_adj_notAfter(10*365*24*60*60)
-    cert.get_subject().CN = "Kandula"
-    cert.set_issuer(cert.get_subject())
-    cert.set_pubkey(k)
-    cert.sign(k, 'sha512')
-    with open(CERT_FILE, "w") as f:
-        f.write(crypto.dump_certificate(
-            crypto.FILETYPE_PEM, cert).decode("utf-8"))
-    with open(KEY_FILE, "w") as f:
-        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
+    if os.path.exists(KEY_FILE) or os.path.exists(CERT_FILE):
+        pass
+    else:
+        k = crypto.PKey()
+        k.generate_key(crypto.TYPE_RSA, 4096)
+        cert = crypto.X509()
+        cert.set_serial_number(1000)
+        cert.gmtime_adj_notBefore(0)
+        cert.gmtime_adj_notAfter(10*365*24*60*60)
+        cert.get_subject().CN = "Kandula"
+        cert.set_issuer(cert.get_subject())
+        cert.set_pubkey(k)
+        cert.sign(k, 'sha512')
+        with open(CERT_FILE, "w") as f:
+            f.write(crypto.dump_certificate(
+                crypto.FILETYPE_PEM, cert).decode("utf-8"))
+        with open(KEY_FILE, "w") as f:
+            f.write(crypto.dump_privatekey(
+                crypto.FILETYPE_PEM, k).decode("utf-8"))
 
 
 def progress(filename, size, sent):
@@ -124,6 +128,9 @@ def scp_file_copy(ssh_session, file, remote_path):
     with SCPClient(ssh_session.get_transport(), progress=progress) as scp:
         scp.put(file, remote_path=remote_path, recursive=True)
 
+def scp_file_download(ssh_session, remote_path, local_path):
+    with SCPClient(ssh_session.get_transport(), progress=progress) as scp:
+        scp.get(remote_path, local_path)
 
 def ssh_run_commands(ssh_session, commands: list):
     for command in commands:
@@ -278,7 +285,7 @@ def get_terraform_vars_from_file(terraform_var_file_path):
 def wait_for_plan_status(session: Session, run_id, statuses):
     # TODO - add max retries
     while True:
-        time.sleep(3)
+        time.sleep(5)
         response = session.get(
             f"https://app.terraform.io/api/v2/runs/{run_id}")
         if response.status_code != 200:
@@ -289,47 +296,46 @@ def wait_for_plan_status(session: Session, run_id, statuses):
                 return
 
 
-def get_workspace_outputs(session: Session, workspace_id):
-    response = session.get(
-        f"https://app.terraform.io/api/v2/workspaces/{workspace_id}/current-state-version")
-    if response.status_code != 200:
-        exit()
-    else:
-        response_data = response.json()
-        state_id = response_data['data']['id']
+@log_function
+def get_workspace_outputs(session: Session, workspace_list):
+    all_outputs = {}
+    for workspace in workspace_list:
+        workspace_outputs_dict = {}
         response = session.get(
-            f"https://app.terraform.io/api/v2/state-versions/{state_id}/outputs")
+            f"https://app.terraform.io/api/v2/workspaces/{workspace['id']}")
         if response.status_code != 200:
             exit()
         else:
             response_data = response.json()
-            outputs_dict = {}
-            for output in response_data['data']:
-                output_key = output['data']['attributes']['name']
-                output_value = output['data']['attributes']['value']
-                outputs_dict[output_key] = output_value
-        return outputs_dict
+            output_ids = []
+            for output in response_data['data']['relationships']['outputs']['data']:
+                output_ids.append(output['id'])
+            for output_id in output_ids:
+                response = session.get(
+                    f"https://app.terraform.io/api/v2/state-version-outputs/{output_id}")
+                if response.status_code != 200:
+                    exit()
+                else:
+                    response_data = response.json()
+                    dict_key = response_data['data']['attributes']['name']
+                    dict_value = response_data['data']['attributes']['value']
+                    workspace_outputs_dict[dict_key] = dict_value
+        all_outputs[workspace['name']] = workspace_outputs_dict
+    return all_outputs
 
 
 @log_function
 # TODO Change from vpc_worspace to global value
-def run_plan_to_completion(session, organization_name, workspace_name):
-    vpc_workspace = get_tfe_workspace_by_names(
-        session,
-        organization_name,
-        workspace_name,
-    )
+def run_plan_to_completion(session, workspaces):
+    for workspace in workspaces:
+        current_plan = plan_by_workspace(session, workspace["id"])
+        current_plan_id = current_plan["data"]["id"]
 
-    vpc_plan = plan_by_workspace(session, vpc_workspace["id"])
-
-    vpc_plan_id = vpc_plan["data"]["id"]
-
-    wait_for_plan_status(session, vpc_plan_id, [
-                         "planned", "planned_and_finished"])
-    apply_run_by_id(session, vpc_plan_id)
-    wait_for_plan_status(session, vpc_plan_id, [
-                         "applied", "planned_and_finished"])
-    # outputs = get_workspace_outputs(session, vpc_workspace["id"])
+        wait_for_plan_status(session, current_plan_id, [
+            "planned", "planned_and_finished"])
+        apply_run_by_id(session, current_plan_id)
+        wait_for_plan_status(session, current_plan_id, [
+            "applied", "planned_and_finished"])
 
 
 ############################################################################################
@@ -346,38 +352,34 @@ def run_terraform(terraform_var_file_path, terraform_txt_vars):
     terraform_vars.update(terraform_txt_vars)
     terraform_vars.update(terraform_cloud_vars)
 
-    run_plan_to_completion(
-        session,
-        terraform_vars["tfe_organization_name"],
-        terraform_vars["vpc_workspace_name"],
-    )
+    vpc_workspace = get_tfe_workspace_by_names(
+        session, terraform_vars["tfe_organization_name"], terraform_vars["vpc_workspace_name"])
+    servers_workspace = get_tfe_workspace_by_names(
+        session, terraform_vars["tfe_organization_name"], terraform_vars["servers_workspace_name"])
+    kubernetes_workspace = get_tfe_workspace_by_names(
+        session, terraform_vars["tfe_organization_name"], terraform_vars["kubernetes_workspace_name"])
+    rds_workspace = get_tfe_workspace_by_names(
+        session, terraform_vars["tfe_organization_name"], terraform_vars["rds_workspace_name"])
 
     run_plan_to_completion(
-        session,
-        terraform_vars["tfe_organization_name"],
-        terraform_vars["servers_workspace_name"],
+        session, [vpc_workspace, servers_workspace, kubernetes_workspace, rds_workspace]
     )
 
-    run_plan_to_completion(
-        session,
-        terraform_vars["tfe_organization_name"],
-        terraform_vars["kubernetes_workspace_name"],
-    )
+    return get_workspace_outputs(session, [vpc_workspace, servers_workspace, kubernetes_workspace, rds_workspace])
 
 
 @log_function
-def run_ansible(terraform_vars):
+def run_ansible(terraform_vars, workspaces_outputs):
     private_key_file_path = terraform_vars["private_key_path"]
-    ansible_files = f"Ansible"
+    github_branch = terraform_vars["github_branch"]
+    ansible_files = f"/home/ubuntu/kandula/Ansible"
 
-    ec2 = boto3.resource("ec2")
-    eks = boto3.client("eks")
-
-    eks_cluster_name = get_eks_cluster_name(eks)
-    bastion_host_public_ip = get_bastion_host_ip(ec2, get_public_ip=True)
-    bastion_host_private_ip = get_bastion_host_ip(ec2, get_public_ip=False)
-    ansible_host_private_ip = get_ansible_host_private_ip(ec2)
+    eks_cluster_name = workspaces_outputs['VPC-Workspace']['cluster_name']
+    bastion_host_public_ip = workspaces_outputs['Servers-Workspace']['bastion_server_public_ip'][0]
+    bastion_host_private_ip = workspaces_outputs['Servers-Workspace']['bastion_server_private_ip'][0]
+    ansible_host_private_ip = workspaces_outputs['Servers-Workspace']['ansible_server_private_ip'][0]
     aws_default_region = terraform_vars['aws_default_region']
+    db_password = terraform_vars['db_password']
     consul_servers_amount = 3
 
     bastion_ssh_session = ssh_client_connection(
@@ -389,7 +391,6 @@ def run_ansible(terraform_vars):
     scp_file_copy(
         ansible_ssh_session, private_key_file_path, "/home/ubuntu/.ssh/id_rsa"
     )
-    scp_file_copy(ansible_ssh_session, ansible_files, "~/")
 
     ssh_commands = [
         "chmod 600 /home/ubuntu/.ssh/id_rsa",
@@ -402,16 +403,19 @@ def run_ansible(terraform_vars):
         "sudo add-apt-repository --yes --update ppa:ansible/ansible",
         "sudo apt install ansible -y",
         "sudo apt install python-boto3 -y",
+        "rm -rf /home/ubuntu/kandula",
+        f"git clone -b {github_branch} https://github.com/benbense/kandula.git /home/ubuntu/kandula",
     ]
 
     install_ansible_modules = [
         "ansible-galaxy collection install community.general",
-        "ansible-galaxy collection install amazon.aws",
         "ansible-galaxy collection install community.docker",
+        "ansible-galaxy collection install amazon.aws",
+        "ansible-galaxy collection install community.postgresql",
     ]
 
     run_ansible_playbook_commands = [
-        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} aws_default_region={aws_default_region}"'
+        f'ansible-playbook {ansible_files}/main.yml -i {ansible_files}/aws_ec2.yml -e "consul_servers_amount={consul_servers_amount} consul_dc_name=kandula eks_cluster_name={eks_cluster_name} aws_default_region={aws_default_region} db_password={db_password}"'
     ]
 
     ssh_run_commands(ansible_ssh_session, ssh_commands)
@@ -421,14 +425,18 @@ def run_ansible(terraform_vars):
 
     print("Done")
 
+    scp_file_download(bastion_ssh_session, "/home/ubuntu/kandula.ovpn", ".")
+    ssh_run_commands(bastion_ssh_session, ["rm /home/ubuntu/kandula.ovpn"])
+
 
 def run(vars_file_path):
 
     terraform_var_file_path = create_tfvars_file(vars_file_path)
     terraform_vars = get_terraform_vars_from_file(terraform_var_file_path)
     generate_ssl_cert()
-    run_terraform(terraform_var_file_path, terraform_vars)
-    run_ansible(terraform_vars)
+    workspaces_outputs = run_terraform(terraform_var_file_path, terraform_vars)
+    run_ansible(terraform_vars, workspaces_outputs)
+    print(json.dumps(workspaces_outputs, sort_keys=False, indent=4))
 
 
 # vars_file_path = sys.argv[1]

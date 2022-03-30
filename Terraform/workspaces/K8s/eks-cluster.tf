@@ -8,16 +8,6 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-data "terraform_remote_state" "servers" {
-  backend = "remote"
-  config = {
-    organization = "${var.tfe_organization_name}"
-    workspaces = {
-      name = "${var.servers_workspace_name}"
-    }
-  }
-}
-
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "17.24.0"
@@ -41,14 +31,14 @@ module "eks" {
       instance_type                 = "t3.medium"
       additional_userdata           = "echo foo bar"
       asg_desired_capacity          = 2
-      additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
+      additional_security_group_ids = [aws_security_group.all_worker_mgmt.id, aws_security_group.prometheus_sg_k8s.id, aws_security_group.consul_sg_k8s.id]
     },
     {
       name                          = "worker-group-2"
       instance_type                 = "t3.large"
       additional_userdata           = "echo foo bar"
       asg_desired_capacity          = 2
-      additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
+      additional_security_group_ids = [aws_security_group.all_worker_mgmt.id, aws_security_group.prometheus_sg_k8s.id, aws_security_group.consul_sg_k8s.id]
     }
   ]
   map_roles = [
@@ -66,4 +56,18 @@ data "aws_eks_cluster" "eks" {
 
 data "aws_eks_cluster_auth" "eks" {
   name = module.eks.cluster_id
+}
+
+resource "kubernetes_secret" "aws_creds" {
+  metadata {
+    name = "aws-cred"
+  }
+
+  data = {
+    username    = var.AWS_ACCESS_KEY_ID
+    password    = var.AWS_SECRET_ACCESS_KEY
+    db_password = var.db_password
+  }
+
+  type = "Opaque"
 }

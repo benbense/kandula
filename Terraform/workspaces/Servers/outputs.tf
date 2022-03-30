@@ -47,3 +47,18 @@ output "jenkins_nodes_ids" {
   description = "ID of the Jenkins Nodes Instances"
   value       = module.servers.jenkins_nodes_ids
 }
+
+output "grafana_alb_public_dns" {
+  description = "Grafana ALB Public DNS name"
+  value       = module.servers.grafana_alb_public_dns
+}
+
+output "prometheus_alb_public_dns" {
+  description = "Prometheus ALB Public DNS name"
+  value       = module.servers.prometheus_alb_public_dns
+}
+
+output "elk_server_private_ip" {
+  description = "Private IP of the ELK server"
+  value       = module.servers.elk_server_private_ip
+}

@@ -2,5 +2,8 @@
 - include_tasks: install_consul.yml
   name: Install and Configure Consul
 
-- include_tasks: register_consul_service.yml
-  when: is_consul_monitored == true and service_role != "service_discovery"
+- include_tasks: register_consul_services.yml
+  when: is_consul_monitored == true
+
+- include_tasks: kubernetes.yml
+  when: service == "ansible"

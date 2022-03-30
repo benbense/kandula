@@ -1,0 +1,20 @@
+{
+    "services": [
+        {
+            "name": "node-exporter",
+            "tags": [
+                "node-exporter",
+                "prometheus"
+            ],
+            "port": 9100,
+            "checks": [
+                {
+                    "name": "tcp-9100",
+                    "tcp": "localhost:9100",
+                    "interval": "5s",
+                    "timeout": "10s"
+                }
+            ]
+        }
+    ]
+}

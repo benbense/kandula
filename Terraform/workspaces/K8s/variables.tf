@@ -30,3 +30,16 @@ variable "servers_workspace_name" {
   type        = string
   description = "Servers Workspace Name for Backed State"
 }
+
+variable "AWS_ACCESS_KEY_ID" {
+  type        = string
+  description = "AWS Access Key"
+}
+variable "AWS_SECRET_ACCESS_KEY" {
+  type        = string
+  description = "AWS Secret Access Key"
+}
+variable "db_password" {
+  type        = string
+  description = "DB Password"
+}

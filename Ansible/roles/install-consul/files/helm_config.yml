@@ -1,0 +1,26 @@
+global:
+  enabled: false
+  image: "consul:1.11.1"
+  datacenter: kandula
+  gossipEncryption:
+    secretName: consul-gossip-encryption-key
+    secretKey: key
+client:
+  enabled: true
+  # Set this to true to expose the Consul clients using the Kubernetes node
+  # IPs. If false, the pod IPs must be routable from the external servers.
+  exposeGossipPorts: true
+  # Consul Cluster Outside K8S leader IP
+  join:
+    - "provider=aws tag_key=service_role tag_value=service_discovery region=us-east-1"
+  grpc: true
+  nodeMeta:
+    pod-name: ${HOSTNAME}
+    host-ip: ${HOST_IP}
+dns:
+  enabled: true
+  clusterIP: "172.20.20.20"
+syncCatalog:
+  enabled: true
+  k8sAllowNamespaces: ["*"]
+  k8sDenyNamespaces: []

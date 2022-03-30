@@ -14,4 +14,12 @@ resource "tfe_registry_module" "aws-servers" {
   }
 }
 
+resource "tfe_registry_module" "aws-rds" {
+  vcs_repo {
+    display_identifier = "benbense/terraform-aws-rds"
+    identifier         = "benbense/terraform-aws-rds"
+    oauth_token_id     = tfe_oauth_client.github_oauth.oauth_token_id
+  }
+}
+
 

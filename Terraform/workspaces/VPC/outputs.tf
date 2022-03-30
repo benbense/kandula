@@ -32,3 +32,13 @@ output "kandula_ssl_cert" {
   description = "ARN of SSL Certificate"
   value       = module.vpc.kandula_ssl_cert
 }
+
+output "route53_zone_id" {
+  description = "Hosted Zone ID"
+  value       = module.vpc.route53_zone_id
+}
+
+output "cidr_block" {
+  description = "VPC CIDR Block"
+  value       = module.vpc.cidr_block
+}

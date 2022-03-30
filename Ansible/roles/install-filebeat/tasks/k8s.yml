@@ -1,0 +1,10 @@
+---
+- name: Copy Filebeat K8s config file
+  copy:
+    src: filebeat-k8s-config.yaml
+    dest: /home/ubuntu/filebeat-k8s-config.yaml
+
+- name: Deploy filebeat on K8s
+  shell: "kubectl apply -f filebeat-k8s-config.yaml"
+  become: false
+  ignore_errors: true

@@ -1,0 +1,9 @@
+---
+- name: Download OpenVPN Installation script
+  get_url:
+    url: https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+    dest: /home/ubuntu/install-openvpn.sh
+    mode: 'u+x'
+
+- name: Deploy OpenVPN using script
+  shell: AUTO_INSTALL=y CLIENT=kandula /home/ubuntu/install-openvpn.sh

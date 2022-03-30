@@ -19,15 +19,25 @@
 ## Features
 
 This deployment tool will deploy:
-+ 3 Worksapces in Terraform Cloud
++ 4 Worksapces in Terraform Cloud
   + VPC Workspace
   + Servers Workspace
-  + Kubernetes Cluster
+  + Kubernetes Cluster Workspace
+  + RDS Workspace
 + Ansible Playbook
-  + Install and configure Consul
-  + Install 1 Jenkins server & 2 Jenkins nodes
+  + Install and configure the following components:
+    + Consul
+    + ELK
+    + Filebeat
+    + Grafana
+    + Jenkins
+    + Node Exporter
+    + Prometheus
+    + Other tools such as: psql, kubectl, trivy, etc.
 + Kubernetes Cluser
   + 2 Workers inside 2 different subnets
++ RDS
+  + Free tier PostgreSQL database
 
 
 ## Prerequisites 
@@ -66,11 +76,12 @@ After all requirements mentioned above have been completed make sure your `vars.
 - Required Secrets:
 <center>
 
-| ID                 | Description                       | Values              |
+| ID                 | Description                       | Value Type          |
 | ------------------ | --------------------------------- | ------------------- |
-| dockerhub-benbense | DockerHub User                    | Username + Password |
-| github-benbense    | Github User                       | SSH Username + Key  |
+| dockerhub-kandula | DockerHub User                    | Username + Password |
+| github-kandula    | Github User                       | SSH Username + Key  |
 | aws-ubuntu         | SSH credentials for Jenkins Nodes | SSH Username + Key  |
+| aws-ssl-arn        | SSL Certificate's ARN             | Secret Text         |
 
 </center>
 
@@ -79,6 +90,7 @@ After all requirements mentioned above have been completed make sure your `vars.
   - Remote Root Directory = /home/ubuntu/jenkins
   - Label = docker
   - Launch Method = SSH (Use `aws-ubuntu` credentials that you have created)
+  - Host = Use Jenkins Nodes IP's or Consul DNS Name (e.g. `Jenkins-Node-0.node.kandula.consul`)
   - Host Key Verification Strategy =  None
 
 - Create Pipeline
@@ -110,6 +122,7 @@ Notes:
 | tfe_organization_email | Terraform Cloud Organization Admin Email Address                                                                                                                                      | str  |
 | aws_default_region     | AWS Default Region                                                                                                                                                                    | str  |
 | elb_account_id         | ELB Account ID - [Pick one according to region](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html#access-logging-bucket-permissions) | int  |
+| db_password | Database password | str
 
 ## Defaults
 > All of those values are pre-filled in the `Terraform/variables.tf` file but can be modified by the user.
@@ -126,10 +139,12 @@ Notes:
 | servers_workspace_name         | Servers Workspace Name                                                     | str  |
 | vpc_workspace_name             | VPC Workspace Name                                                         | str  |
 | kubernetes_workspace_name      | Kubernetes Workspace Name                                                  | str  |
+| rds_workspace_name             | RDS Workspace Name                                                         | str  |
 | github_repository_name         | Github repo identifier for Workspace creation                              | str  |
 | servers_workspace_directory    | Working directory for servers module                                       | str  |
 | vpc_workspace_directory        | Working directory for vpc module                                           | str  |
 | kubernetes_workspace_directory | Working directory for Kubernetes module                                    | str  |
+| RDS_workspace_directory        | Working directory for RDS module                                           | str  |
 | k8s_service_account_namespace  | Kubernetes Service Account Namespace                                       | str  |
 | k8s_service_account_name       | Kubernetes Service Account Name                                            | str  |
 | auto_apply                     | Whether to automatically apply changes when a Terraform plan is successful | bool |
